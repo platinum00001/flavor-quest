@@ -1,0 +1,63 @@
+{
+  "_note": "Restaurant list for Flavor Quest. Entries with \"placeholder\": true are samples only, not real businesses. Leave checkoutUrl empty to show 'Coming soon'.",
+  "restaurants": [
+    {
+      "id": "cape-island-cafe",
+      "name": "Cape Island Café",
+      "town": "Falmouth",
+      "address": "316 Gifford St, Falmouth, MA",
+      "hours": "Lunch Mon–Fri, 11 AM–3 PM",
+      "participating": true,
+      "featured": true,
+      "placeholder": false,
+      "description": "Our featured participating restaurant and the first Flavor Quest pilot. Scan the QR code at the counter to check in.",
+      "giftCertificate": {
+        "value": 25,
+        "price": 20,
+        "label": "Example offer",
+        "checkoutUrl": ""
+      }
+    },
+    {
+      "id": "sample-hyannis",
+      "name": "Sample Restaurant – Hyannis",
+      "town": "Barnstable/Hyannis",
+      "address": "Placeholder address",
+      "hours": "Placeholder hours",
+      "participating": false,
+      "featured": false,
+      "placeholder": true,
+      "description": "Placeholder entry to show how a restaurant page looks. Not a real business.",
+      "giftCertificate": null
+    },
+    {
+      "id": "sample-chatham",
+      "name": "Sample Restaurant – Chatham",
+      "town": "Chatham",
+      "address": "Placeholder address",
+      "hours": "Placeholder hours",
+      "participating": false,
+      "featured": false,
+      "placeholder": true,
+      "description": "Placeholder entry to show how a restaurant page looks. Not a real business.",
+      "giftCertificate": {
+        "value": 50,
+        "price": 40,
+        "label": "Sample offer (not real)",
+        "checkoutUrl": ""
+      }
+    },
+    {
+      "id": "sample-provincetown",
+      "name": "Sample Restaurant – Provincetown",
+      "town": "Provincetown",
+      "address": "Placeholder address",
+      "hours": "Placeholder hours",
+      "participating": false,
+      "featured": false,
+      "placeholder": true,
+      "description": "Placeholder entry to show how a restaurant page looks. Not a real business.",
+      "giftCertificate": null
+    }
+  ]
+}

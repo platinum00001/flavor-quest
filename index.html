@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flavor Quest – Cape Cod</title>
+<meta name="description" content="Eat your way across Cape Cod. Unlock the flavor tree, discover textures, earn badges and rewards.">
+<meta name="theme-color" content="#0e5a75">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Flavor Quest">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar" id="topbar" hidden>
+    <button class="me" id="meBtn" aria-label="Profile and settings">
+      <span class="avatar sm" id="meAvatar"></span>
+      <span class="me-text"><b id="meName"></b><small id="meLevel"></small></span>
+    </button>
+    <div class="xpwrap" aria-label="Experience">
+      <div class="xpbar"><i id="xpFill"></i></div>
+      <small id="xpText"></small>
+    </div>
+  </header>
+
+  <main id="view" class="view"></main>
+
+  <nav class="bottomnav" id="bottomnav" hidden>
+    <button data-tab="home"><span class="ni">🗺️</span><span>Map</span></button>
+    <button data-tab="tree"><span class="ni">🌳</span><span>Tree</span></button>
+    <button data-tab="log" class="log-btn"><span class="ni plus">＋</span><span>Log</span></button>
+    <button data-tab="journal"><span class="ni">📔</span><span>Journal</span></button>
+    <button data-tab="rewards"><span class="ni">🏆</span><span>Rewards</span></button>
+  </nav>
+</div>
+
+<div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" hidden>
+  <div class="sheet-grip"></div>
+  <button class="sheet-close" id="sheetClose" aria-label="Close">✕</button>
+  <div id="sheetBody"></div>
+</section>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<div id="confetti" class="confetti" aria-hidden="true"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

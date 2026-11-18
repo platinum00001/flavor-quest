@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flavor Quest – Printable QR check-in codes</title>
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#fdf6ea;color:#16323d}
+  header{padding:20px;max-width:900px;margin:0 auto}
+  h1{font-family:Georgia,serif;margin:0 0 6px}
+  .muted{color:#6a7f88}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .bar input{flex:1;min-width:240px;padding:10px;border-radius:10px;border:2px solid #e7dcc8;font-size:15px}
+  button{padding:10px 16px;border-radius:10px;border:0;background:#0e5a75;color:#fff;font-weight:700;cursor:pointer;font-size:15px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;padding:0 20px 40px;max-width:900px;margin:0 auto}
+  .tent{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 6px 20px rgba(8,59,78,.12);break-inside:avoid;page-break-inside:avoid;border:3px solid #0e5a75}
+  .tent .brand{font-family:Georgia,serif;font-weight:700;color:#0e5a75;font-size:22px}
+  .tent .cta{font-weight:800;font-size:15px;margin:4px 0 10px}
+  .tent .qr svg,.tent .qr img{width:200px;height:200px}
+  .tent .name{font-weight:800;font-size:17px;margin-top:8px}
+  .tent .url{font-size:10px;color:#6a7f88;word-break:break-all;margin-top:6px}
+  .tent .sample{display:inline-block;background:#efefef;color:#777;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:6px}
+  @media print{header .bar,header p{display:none}body{background:#fff}.tent{box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🍽️ QR check-in codes</h1>
+  <p class="muted">Print these and place them at participating restaurants. Scanning opens Flavor Quest, checks the player in (+XP, once per restaurant per day), and shows the restaurant page.</p>
+  <div class="bar"><label class="muted" for="base">Site URL:</label><input id="base"><button onclick="window.print()">🖨️ Print</button></div>
+</header>
+<div class="grid" id="grid"></div>
+<script src="js/qrcode.js"></script>
+<script>
+(function(){
+  var baseInput = document.getElementById('base');
+  baseInput.value = location.href.replace(/qr\.html.*$/, '');
+  var list = [];
+  function draw(){
+    var base = baseInput.value.trim();
+    if (base && !/\/$/.test(base)) base += '/';
+    document.getElementById('grid').innerHTML = list.map(function(r){
+      var url = base + '?r=' + encodeURIComponent(r.id);
+      var qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+      var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+      return '<div class="tent"><div class="brand">Flavor Quest</div><div class="cta">Scan to check in &amp; earn XP</div>' +
+        '<div class="qr">' + qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true }) + '</div>' +
+        '<div class="name">' + esc(r.name) + '</div>' + (r.placeholder ? '<div class="sample">SAMPLE – not a real business</div>' : '') +
+        '<div class="url">' + esc(url) + '</div></div>';
+    }).join('');
+  }
+  baseInput.addEventListener('input', draw);
+  fetch('data/restaurants.json', { cache: 'no-cache' }).then(function(r){ return r.json(); }).then(function(d){ list = d.restaurants || []; draw(); })
+    .catch(function(){ document.getElementById('grid').innerHTML = '<p>Could not load data/restaurants.json (open this page from a web server).</p>'; });
+})();
+</script>
+</body>
+</html>

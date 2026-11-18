@@ -1,0 +1,16 @@
+{
+  "name": "Flavor Quest – Cape Cod",
+  "short_name": "Flavor Quest",
+  "description": "Eat your way across Cape Cod. Unlock the flavor tree, earn badges, and collect rewards.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fdf6ea",
+  "theme_color": "#0e5a75",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
