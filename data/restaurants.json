@@ -1,63 +1,2670 @@
 {
-  "_note": "Restaurant list for Flavor Quest. Entries with \"placeholder\": true are samples only, not real businesses. Leave checkoutUrl empty to show 'Coming soon'.",
-  "restaurants": [
+ "_note": "Flavor Quest restaurant list. Falmouth & Woods Hole, researched Nov 2026 from restaurant websites/menus and local guides. Dishes without \"suggested\" were found on the restaurant's menu/site or in a published review of it; \"suggested\": true means a likely dish that has not been verified. participating=false means the restaurant has not joined Flavor Quest. No deals are offered except the Cape Island Café example.",
+ "updated": "2026-11-18",
+ "restaurants": [
+  {
+   "id": "cape-island-cafe",
+   "name": "Cape Island Café",
+   "town": "Falmouth",
+   "village": "Teaticket",
+   "address": "316 Gifford St, Falmouth, MA",
+   "lat": 41.56227,
+   "lng": -70.6111,
+   "cuisine": "Café · soups, salads, bowls & wraps",
+   "website": "https://capeislandcafe.com",
+   "participating": true,
+   "featured": true,
+   "hours": "Lunch Mon–Fri, 11 AM–3 PM",
+   "description": "Our featured participating restaurant and the first Flavor Quest pilot. Scan the QR code at the counter to check in.",
+   "giftCertificate": {
+    "value": 25,
+    "price": 20,
+    "label": "Example offer",
+    "checkoutUrl": ""
+   },
+   "dishSource": "capeislandcafe.com menu",
+   "dishes": [
     {
-      "id": "cape-island-cafe",
-      "name": "Cape Island Café",
-      "town": "Falmouth",
-      "address": "316 Gifford St, Falmouth, MA",
-      "hours": "Lunch Mon–Fri, 11 AM–3 PM",
-      "participating": true,
-      "featured": true,
-      "placeholder": false,
-      "description": "Our featured participating restaurant and the first Flavor Quest pilot. Scan the QR code at the counter to check in.",
-      "giftCertificate": {
-        "value": 25,
-        "price": 20,
-        "label": "Example offer",
-        "checkoutUrl": ""
-      }
+     "name": "Kale & Bean Soup",
+     "flavors": [
+      "salty",
+      "bitter",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ]
     },
     {
-      "id": "sample-hyannis",
-      "name": "Sample Restaurant – Hyannis",
-      "town": "Barnstable/Hyannis",
-      "address": "Placeholder address",
-      "hours": "Placeholder hours",
-      "participating": false,
-      "featured": false,
-      "placeholder": true,
-      "description": "Placeholder entry to show how a restaurant page looks. Not a real business.",
-      "giftCertificate": null
+     "name": "Cape Road Chili Bowl",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
     },
     {
-      "id": "sample-chatham",
-      "name": "Sample Restaurant – Chatham",
-      "town": "Chatham",
-      "address": "Placeholder address",
-      "hours": "Placeholder hours",
-      "participating": false,
-      "featured": false,
-      "placeholder": true,
-      "description": "Placeholder entry to show how a restaurant page looks. Not a real business.",
-      "giftCertificate": {
-        "value": 50,
-        "price": 40,
-        "label": "Sample offer (not real)",
-        "checkoutUrl": ""
-      }
+     "name": "Salmon Bowl",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "flaky"
+     ]
     },
     {
-      "id": "sample-provincetown",
-      "name": "Sample Restaurant – Provincetown",
-      "town": "Provincetown",
-      "address": "Placeholder address",
-      "hours": "Placeholder hours",
-      "participating": false,
-      "featured": false,
-      "placeholder": true,
-      "description": "Placeholder entry to show how a restaurant page looks. Not a real business.",
-      "giftCertificate": null
+     "name": "Harbor Chop Salad",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Cashew Chicken Wrap",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crunchy",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Chicken Bacon Black Bean Wrap",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Southwest Rice Bowl",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
     }
-  ]
+   ]
+  },
+  {
+   "id": "the-quarterdeck",
+   "name": "The Quarterdeck",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "164 Main St, Falmouth, MA",
+   "lat": 41.55278,
+   "lng": -70.6172,
+   "cuisine": "Seafood · New England",
+   "website": "https://qdfalmouth.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Seafood Pot Pie",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Stuffed Quahog with Linguiça",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Baked Day-Boat Scallops",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "crispy"
+     ]
+    },
+    {
+     "name": "Portuguese Kale Soup",
+     "flavors": [
+      "salty",
+      "bitter",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Fried Clams",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "osteria-la-civetta",
+   "name": "Osteria La Civetta",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "133 Main St, Falmouth, MA",
+   "lat": 41.55292,
+   "lng": -70.61793,
+   "cuisine": "Northern Italian",
+   "website": "https://osterialacivetta.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Tagliatelle Bolognese",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Spaghetti Carbonara",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Strozzapreti al Pesto",
+     "flavors": [
+      "salty",
+      "bitter",
+      "umami"
+     ],
+     "textures": [
+      "chewy"
+     ]
+    },
+    {
+     "name": "Butternut Squash Tortelloni",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "silky",
+      "tender"
+     ]
+    },
+    {
+     "name": "Lasagne alla Bolognese",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Torta della Nonna",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "flaky",
+      "creamy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "la-cucina-sul-mare",
+   "name": "La Cucina Sul Mare",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "237 Main St, Falmouth, MA",
+   "lat": 41.55206,
+   "lng": -70.61579,
+   "cuisine": "Italian · seafood",
+   "website": "https://lacucinasulmare.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Old-World Meat Lasagna",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Braised Short Rib Cacciatore",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Halibut Limone",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "flaky",
+      "tender"
+     ]
+    },
+    {
+     "name": "Seafood Minestrone",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Rigatoni alla Vodka",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Lobster Ravioli",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "silky",
+      "creamy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "anejo-falmouth",
+   "name": "Añejo Mexican Bistro",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "188 Main St, Falmouth, MA",
+   "lat": 41.55258,
+   "lng": -70.61677,
+   "cuisine": "Mexican",
+   "website": "https://www.anejo.cc/falmouth",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Quahogs Rellenos (chorizo-stuffed quahogs)",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Chipotle Stung Lobster Bisque",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Main Street Corn",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crunchy",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Spicy Fried Pickles",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Birria Beef Empanadas",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Mango Habanero Bang Bang Shrimp",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "spicy-hot"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pickle-jar-kitchen",
+   "name": "Pickle Jar Kitchen",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "170 Main St, Falmouth, MA",
+   "lat": 41.55273,
+   "lng": -70.61708,
+   "cuisine": "Breakfast & lunch",
+   "website": "https://picklejarkitchen.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Fried Garlic-Dill Pickle Chips",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Blueberry Muffin French Toast",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "creamy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Pastrami-Cured Salmon on an Everything Bagel",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "silky"
+     ]
+    },
+    {
+     "name": "The Firehouse (smoked chili-rubbed pork)",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "The Town Hall (pastrami-spiced roast beef on rye)",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asti-falmouth",
+   "name": "Asti Modern Greek",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "117 Main St, Falmouth, MA",
+   "lat": 41.55314,
+   "lng": -70.61823,
+   "cuisine": "Greek",
+   "website": "https://www.asticapecod.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Pork Gyro with Tzatziki",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Falafel Gyro",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Spanakopita",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Greek Salad with Feta",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crunchy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Baklava",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "flaky",
+      "crunchy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "tap-city-grille",
+   "name": "Tap City Grille",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "285 Main St, Falmouth, MA",
+   "lat": 41.55199,
+   "lng": -70.6144,
+   "cuisine": "American grille · taproom",
+   "website": "https://www.tapcitygrille.com/falmouth",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Local IPA on Tap",
+     "flavors": [
+      "bitter"
+     ],
+     "textures": [
+      "fizzy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Cheeseburger",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "juicy",
+      "tender"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Buffalo Wings",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "spicy-hot"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fish Tacos",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "crunchy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "liam-maguires",
+   "name": "Liam Maguire's Irish Pub",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "273 Main St, Falmouth, MA",
+   "lat": 41.55201,
+   "lng": -70.61466,
+   "cuisine": "Irish pub",
+   "website": "https://liammaguire.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Fish & Chips",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Shepherd's Pie",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "tender"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Guinness Beef Stew",
+     "flavors": [
+      "salty",
+      "bitter",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Pint of Guinness",
+     "flavors": [
+      "bitter"
+     ],
+     "textures": [
+      "creamy",
+      "fizzy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "golden-swan",
+   "name": "Golden Swan Indian Cuisine",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "322 Main St, Falmouth, MA",
+   "lat": 41.55203,
+   "lng": -70.6134,
+   "cuisine": "Indian",
+   "website": "",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Chicken Tikka Masala",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Chicken Korma",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Shrimp Vindaloo",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "spicy-hot",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Chicken Pakoras",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy"
+     ]
+    },
+    {
+     "name": "Mango Lassi",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "bluefins-falmouth",
+   "name": "Bluefins",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "Main St, Falmouth, MA",
+   "lat": 41.55203,
+   "lng": -70.61419,
+   "cuisine": "Sushi · seafood",
+   "website": "https://bluefinsfalmouth.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Salmon Nigiri",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Spicy Tuna Roll",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "spicy-hot"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Miso Soup",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Seaweed Salad",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crunchy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "maison-villatte",
+   "name": "Maison Villatte",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "261 Main St, Falmouth, MA",
+   "lat": 41.55198,
+   "lng": -70.61501,
+   "cuisine": "French bakery & café",
+   "website": "https://instagram.com/maisonvillatte",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Almond Croissant",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "flaky",
+      "crispy"
+     ]
+    },
+    {
+     "name": "Chocolate Croissant",
+     "flavors": [
+      "sweet",
+      "bitter"
+     ],
+     "textures": [
+      "flaky"
+     ]
+    },
+    {
+     "name": "Quiche",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "flaky"
+     ]
+    },
+    {
+     "name": "Éclair",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Sourdough Loaf",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crunchy",
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "the-glass-onion",
+   "name": "The Glass Onion",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "37 N Main St, Falmouth, MA",
+   "lat": 41.55561,
+   "lng": -70.62158,
+   "cuisine": "New American · fine dining",
+   "website": "https://theglassoniondining.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Lobster Strudel with Tarragon Beurre Blanc",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "flaky",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Brined Long Island Duck Breast",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Seafood Risotto",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Sweet Potato Gnocchi",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "silky",
+      "tender"
+     ]
+    },
+    {
+     "name": "House-Made Ice Cream",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "betsys-diner",
+   "name": "Betsy's Diner",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "457 Main St, Falmouth, MA",
+   "lat": 41.55196,
+   "lng": -70.60997,
+   "cuisine": "Classic diner",
+   "website": "",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Linguiça & Eggs",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Pancakes with Maple Syrup",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Diner Cheeseburger",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "juicy"
+     ]
+    },
+    {
+     "name": "Corned Beef Hash",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "tiger-ramen",
+   "name": "Tiger Ramen",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "587 Main St, Falmouth, MA",
+   "lat": 41.55226,
+   "lng": -70.60678,
+   "cuisine": "Japanese ramen",
+   "website": "",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Pork Shoyu Ramen",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "silky"
+     ]
+    },
+    {
+     "name": "Japanese Fried Chicken (Karaage)",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Pork Bao Buns",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Bubble Tea",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mary-ellens-portuguese-bakery",
+   "name": "Mary Ellen's Portuguese Bakery",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "829 Main St, Falmouth, MA",
+   "lat": 41.55426,
+   "lng": -70.60093,
+   "cuisine": "Portuguese bakery & breakfast",
+   "website": "",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Malasadas",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "chewy",
+      "crispy"
+     ]
+    },
+    {
+     "name": "Portuguese Sweet Bread French Toast",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Linguiça Sandwich",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy"
+     ]
+    },
+    {
+     "name": "Portuguese Sweet Bread",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "tender"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "romeos-falmouth",
+   "name": "Romeo's",
+   "town": "Falmouth",
+   "village": "Falmouth Village",
+   "address": "75 Davis Straits, Falmouth, MA",
+   "lat": 41.55895,
+   "lng": -70.59925,
+   "cuisine": "New American · small plates",
+   "website": "https://romeosfalmouth.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Togarashi Cheddar Biscuits with Truffle Honey",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Deviled Eggs with Crispy Pepperoni",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "crispy"
+     ]
+    },
+    {
+     "name": "Lobster Potato Croquettes",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Tuna Crudo",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky"
+     ]
+    },
+    {
+     "name": "Thai Mussels",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Berkshire Pork Ribs",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "juicy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "seafood-sams-falmouth",
+   "name": "Seafood Sam's",
+   "town": "Falmouth",
+   "village": "Falmouth (Palmer Ave)",
+   "address": "356 Palmer Ave, Falmouth, MA",
+   "lat": 41.56261,
+   "lng": -70.61948,
+   "cuisine": "Clam shack · fried seafood (seasonal)",
+   "website": "https://seafoodsams.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Whole Belly Clam Roll",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Fried Haddock Platter",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ]
+    },
+    {
+     "name": "Lobster Roll (cold with lemon mayo or hot buttered)",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Original Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Lobster Bisque",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "silky"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "flying-bridge",
+   "name": "The Flying Bridge",
+   "town": "Falmouth",
+   "village": "Falmouth Harbor",
+   "address": "220 Scranton Ave, Falmouth, MA",
+   "lat": 41.54769,
+   "lng": -70.60398,
+   "cuisine": "Seafood · sushi",
+   "website": "https://flyingbridgerestaurant.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Portuguese Fishermen's Stew",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Fried Clams",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Fish & Chips",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ]
+    },
+    {
+     "name": "Lobster Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "crispy"
+     ]
+    },
+    {
+     "name": "Stuffed Quahogs",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Hand-Cut Onion Rings",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "crunchy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "falmouth-raw-bar",
+   "name": "The Falmouth Raw Bar",
+   "town": "Falmouth",
+   "village": "Falmouth Harbor",
+   "address": "56 Scranton Ave, Falmouth, MA",
+   "lat": 41.5519,
+   "lng": -70.60205,
+   "cuisine": "Raw bar · seafood",
+   "website": "https://www.falmouthrawbar.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Wellfleet Oysters (half dozen)",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Local Littleneck Clams",
+     "flavors": [
+      "salty"
+     ],
+     "textures": [
+      "juicy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Peel & Eat Shrimp",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "juicy",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "New England Clam Chowdah",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Lobster Bisque",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Poke Ahi Tuna Bowl",
+     "flavors": [
+      "salty",
+      "bitter",
+      "umami"
+     ],
+     "textures": [
+      "silky"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "jims-clam-shack",
+   "name": "Jim's Clam Shack",
+   "town": "Falmouth",
+   "village": "Falmouth Harbor",
+   "address": "227 Clinton Ave, Falmouth, MA",
+   "lat": 41.5439,
+   "lng": -70.6071,
+   "cuisine": "Clam shack · fried seafood",
+   "website": "",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Fried Clam Strips",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Lobster Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Fried Scallops",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "tender"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "shipwrecked-falmouth",
+   "name": "Shipwrecked",
+   "town": "Falmouth",
+   "village": "Falmouth Heights",
+   "address": "263 Grand Ave, Falmouth, MA",
+   "lat": 41.54528,
+   "lng": -70.59686,
+   "cuisine": "Seafood · sushi · sports bar",
+   "website": "https://www.shipwreckedfalmouth.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fish Tacos",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "crunchy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Sushi Roll",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Lobster Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "the-wharf-falmouth",
+   "name": "The Wharf Restaurant & Bar",
+   "town": "Falmouth",
+   "village": "Falmouth Heights",
+   "address": "286 Grand Ave, Falmouth, MA",
+   "lat": 41.54468,
+   "lng": -70.59752,
+   "cuisine": "Classic Cape Cod seafood",
+   "website": "https://www.thewharffalmouth.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Baked Stuffed Scallops",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "crunchy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fried Clam Plate",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Cranberry Walnut Salad",
+     "flavors": [
+      "sweet",
+      "sour",
+      "bitter"
+     ],
+     "textures": [
+      "crunchy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fish & Chips",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "falmouth-fish-market",
+   "name": "Falmouth Fish Market",
+   "town": "Falmouth",
+   "village": "Teaticket",
+   "address": "157 Teaticket Hwy, Falmouth, MA",
+   "lat": 41.56455,
+   "lng": -70.5957,
+   "cuisine": "Seafood market & takeout",
+   "website": "https://falmouthfish.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Fish & Chips",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ]
+    },
+    {
+     "name": "Clam Belly Plate with House Tartar",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Lobster Salad Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Scallop Plate",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "thai-kitchen-falmouth",
+   "name": "Thai Kitchen",
+   "town": "Falmouth",
+   "village": "Teaticket",
+   "address": "258 Teaticket Hwy, Falmouth, MA",
+   "lat": 41.56734,
+   "lng": -70.59542,
+   "cuisine": "Thai",
+   "website": "https://www.thaikitchenfalmouth.net",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Pad Thai",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Chicken Red Curry",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Chicken Basil",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Chicken Cashew Nuts",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crunchy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Thai Fried Rice",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "quahog-republic-dive-bar",
+   "name": "Quahog Republic Dive Bar",
+   "town": "Falmouth",
+   "village": "Falmouth (Spring Bars Rd)",
+   "address": "97 Spring Bars Rd, Falmouth, MA",
+   "lat": 41.55936,
+   "lng": -70.59318,
+   "cuisine": "Pub · seafood",
+   "website": "https://www.quahogrepublic.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Stuffed Quahog",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fried Calamari",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Local Craft IPA",
+     "flavors": [
+      "bitter"
+     ],
+     "textures": [
+      "fizzy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "chapoquoit-grill",
+   "name": "Chapoquoit Grill",
+   "town": "Falmouth",
+   "village": "West Falmouth",
+   "address": "410 West Falmouth Hwy, Falmouth, MA",
+   "lat": 41.59242,
+   "lng": -70.6361,
+   "cuisine": "American grill · wood-fired",
+   "website": "https://www.chapoquoitgrillwestfalmouth.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Chappy Littlenecks (Portuguese style, spicy tomato broth)",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Fried Calamari with Banana Peppers & Capers",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Tuna Tartare with Wasabi Aioli",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "crispy"
+     ]
+    },
+    {
+     "name": "Spinach Salad with Pears, Candied Walnuts & Stilton",
+     "flavors": [
+      "sweet",
+      "salty",
+      "bitter"
+     ],
+     "textures": [
+      "crunchy"
+     ]
+    },
+    {
+     "name": "PEI Mussels in White Wine & Garlic",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Grill's Garlic Bread",
+     "flavors": [
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bucatino",
+   "name": "Bucatino Restaurant & Wine Bar",
+   "town": "Falmouth",
+   "village": "North Falmouth",
+   "address": "7 Nathan Ellis Hwy, North Falmouth, MA",
+   "lat": 41.64625,
+   "lng": -70.61206,
+   "cuisine": "Italian · wine bar",
+   "website": "https://www.bucawinebar.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Bucatini all'Amatriciana",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Arugula & Parmesan Salad",
+     "flavors": [
+      "sour",
+      "salty",
+      "bitter"
+     ],
+     "textures": [
+      "crunchy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Tiramisu",
+     "flavors": [
+      "sweet",
+      "bitter"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Margherita Pizza",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "crispy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "silver-beach-pizza",
+   "name": "Silver Beach Pizza & Seafood",
+   "town": "Falmouth",
+   "village": "North Falmouth",
+   "address": "557 N Falmouth Hwy, North Falmouth, MA",
+   "lat": 41.6468,
+   "lng": -70.61209,
+   "cuisine": "Pizza · seafood",
+   "website": "https://www.silverbeachpizzacapecod.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Cheese Pizza",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "chewy",
+      "crispy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fried Clam Plate",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Steak & Cheese Sub",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "chewy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "epic-oyster",
+   "name": "Epic Oyster",
+   "town": "Falmouth",
+   "village": "North Falmouth",
+   "address": "70 County Rd, North Falmouth, MA",
+   "lat": 41.64881,
+   "lng": -70.6168,
+   "cuisine": "Oyster bar",
+   "website": "https://epicoyster.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Clams Casino",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Raw Oysters on the Half Shell",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Portuguese Cod (winter)",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky",
+      "tender"
+     ]
+    },
+    {
+     "name": "Crab Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Lobster Bisque",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "captain-kidd",
+   "name": "The Captain Kidd",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "77 Water St, Woods Hole, MA",
+   "lat": 41.52459,
+   "lng": -70.67071,
+   "cuisine": "Pub · seafood",
+   "website": "https://www.thecaptainkidd.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "New England Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Fish & Chips",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ]
+    },
+    {
+     "name": "Cape Cod Lobster Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Oysters Shucked to Order",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Stuffed Quahog with Linguiça",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "chewy"
+     ]
+    },
+    {
+     "name": "Cape Cod Reuben (fried cod)",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "flaky"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "landfall-woods-hole",
+   "name": "Landfall",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "9 Luscombe Ave, Woods Hole, MA",
+   "lat": 41.52368,
+   "lng": -70.67009,
+   "cuisine": "Seafood · lobster house (seasonal)",
+   "website": "https://www.landfallwoodshole.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Lobster Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender"
+     ]
+    },
+    {
+     "name": "Lobster Bisque",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Baked Stuffed Lobster",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Swordfish",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Stuffed Quahogs",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Portuguese Toast with Garlic Butter",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "tender"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "shuckers-woods-hole",
+   "name": "Shuckers World Famous Raw Bar",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "91A Water St, Woods Hole, MA",
+   "lat": 41.52485,
+   "lng": -70.67082,
+   "cuisine": "Raw bar · seafood (seasonal)",
+   "website": "https://shuckerswoodshole.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Murph's Famous Baked Stuffed Scrod",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Oysters on the Half Shell",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "silky",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Half Pound Lobster Roll",
+     "flavors": [
+      "sweet",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "crispy"
+     ]
+    },
+    {
+     "name": "New England Clam Chowder",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Stuffed Quahog",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Day Boat Scallops with Lemon & Butter",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Killer Mac & Cheese",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "crunchy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "water-street-kitchen",
+   "name": "Water Street Kitchen",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "56 Water St, Woods Hole, MA",
+   "lat": 41.5241,
+   "lng": -70.67016,
+   "cuisine": "New American · seafood",
+   "website": "https://www.waterstreetkitchen.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Smoked Bluefish Pâté",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ]
+    },
+    {
+     "name": "Seafood Cioppino",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Duck Leg Confit with Fingerlings",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "tender"
+     ]
+    },
+    {
+     "name": "Kimchi Pancake",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "House Sourdough",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crunchy",
+      "chewy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pie-in-the-sky",
+   "name": "Pie in the Sky Bakery & Café",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "10 Water St, Woods Hole, MA",
+   "lat": 41.52336,
+   "lng": -70.66886,
+   "cuisine": "Bakery & coffee",
+   "website": "https://piecoffee.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Almond Croissant",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "flaky"
+     ]
+    },
+    {
+     "name": "Dulce de Leche Croissant",
+     "flavors": [
+      "sweet"
+     ],
+     "textures": [
+      "flaky",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Key Lime Pie",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "creamy",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Chocolate Mousse Pie",
+     "flavors": [
+      "sweet",
+      "bitter"
+     ],
+     "textures": [
+      "silky",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Apple Cranberry Pie (seasonal)",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "flaky",
+      "juicy"
+     ]
+    },
+    {
+     "name": "Nitro Cold Brew",
+     "flavors": [
+      "bitter"
+     ],
+     "textures": [
+      "silky"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "quicks-hole-taqueria",
+   "name": "Quicks Hole Taqueria",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "6 Luscombe Ave, Woods Hole, MA",
+   "lat": 41.52375,
+   "lng": -70.66947,
+   "cuisine": "Mexican · seafood tacos",
+   "website": "https://quicksholetaqueria.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "The Original Lobster Taco",
+     "flavors": [
+      "sweet",
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "tender",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Lobster Nachos",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "creamy"
+     ]
+    },
+    {
+     "name": "Fried Cod Tacos",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy",
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Blackened Mahi Mahi Sandwich",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender",
+      "spicy-hot"
+     ]
+    },
+    {
+     "name": "Wicked Fresh Kale Salad",
+     "flavors": [
+      "sour",
+      "salty",
+      "bitter"
+     ],
+     "textures": [
+      "crunchy"
+     ]
+    },
+    {
+     "name": "Chicken Baja Bowl",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "quahog-republic-leeside",
+   "name": "Quahog Republic Leeside",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "29 Railroad Ave, Woods Hole, MA",
+   "lat": 41.52323,
+   "lng": -70.66955,
+   "cuisine": "Pub · seafood",
+   "website": "https://www.quahogrepublic.com",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Stuffed Quahog",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crunchy",
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Fried Clam Roll",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "chewy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Local IPA",
+     "flavors": [
+      "bitter"
+     ],
+     "textures": [
+      "fizzy"
+     ],
+     "suggested": true
+    }
+   ]
+  },
+  {
+   "id": "coffee-obsession",
+   "name": "Coffee Obsession",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "38 Water St, Woods Hole, MA",
+   "lat": 41.52389,
+   "lng": -70.66963,
+   "cuisine": "Coffee shop",
+   "website": "",
+   "participating": false,
+   "featured": false,
+   "dishes": [
+    {
+     "name": "Espresso",
+     "flavors": [
+      "bitter"
+     ],
+     "textures": [
+      "silky"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Mocha",
+     "flavors": [
+      "sweet",
+      "bitter"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "suggested": true
+    },
+    {
+     "name": "Cranberry Orange Scone",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "flaky"
+     ],
+     "suggested": true
+    }
+   ]
+  }
+ ]
 }

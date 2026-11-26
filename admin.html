@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Flavor Quest – Admin: merge player submissions</title>
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#fdf6ea;color:#16323d}
+  main{max-width:900px;margin:0 auto;padding:20px}
+  h1{font-family:Georgia,serif;margin:0 0 4px} h2{font-family:Georgia,serif;font-size:19px;margin:22px 0 6px}
+  .muted{color:#6a7f88;font-size:14px}
+  textarea{width:100%;box-sizing:border-box;min-height:150px;font:12px ui-monospace,Menlo,monospace;border:2px solid #e7dcc8;border-radius:10px;padding:10px;background:#fff}
+  #current{min-height:110px} #out{min-height:220px}
+  button,.btn{display:inline-block;padding:10px 16px;border-radius:10px;border:0;background:#0e5a75;color:#fff;font-weight:700;cursor:pointer;font-size:15px;text-decoration:none;margin:6px 6px 0 0}
+  button.ghost{background:#fff;color:#0e5a75;border:2px solid #0e5a75}
+  label.opt{display:block;margin:8px 0;font-size:14px}
+  ol{padding-left:20px} li{margin:4px 0;font-size:14px}
+  .ok{color:#3d7b14} .warn{color:#a26b00} .bad{color:#c23a2b}
+  .card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 14px rgba(8,59,78,.1);margin-top:12px}
+</style>
+</head>
+<body>
+<main>
+  <h1>🛠️ Merge player submissions</h1>
+  <p class="muted">Paste the JSON lines players emailed from "Send to Flavor Quest". This page merges them into <code>data/restaurants.json</code>. Download the result, replace the file in the repo, and commit. Everything runs in your browser, and nothing is uploaded.</p>
+
+  <h2>1. Current restaurants.json</h2>
+  <p class="muted" id="curStatus">Loading the live file…</p>
+  <textarea id="current" spellcheck="false"></textarea>
+
+  <h2>2. Paste submitted lines</h2>
+  <p class="muted">Paste whole emails if you like. Any line containing a <code>{"fq":1,…}</code> object is picked up.</p>
+  <textarea id="lines" spellcheck="false" placeholder='{"fq":1,"restaurant":{"id":"...","name":"..."},"dish":{"name":"...","flavors":["salty","umami"],"textures":["creamy"]}}'></textarea>
+  <label class="opt"><input type="checkbox" id="overwrite"> If a dish already exists, replace its flavors and textures with the player's version</label>
+  <label class="opt"><input type="checkbox" id="markVerified"> Mark merged dishes as verified (leave unchecked to keep them as "likely" until you check the menu)</label>
+  <button id="merge">Merge</button>
+
+  <div class="card" id="report" hidden><h2 style="margin-top:0">Result</h2><ol id="log"></ol></div>
+
+  <h2>3. Merged output</h2>
+  <textarea id="out" spellcheck="false" readonly></textarea>
+  <button id="download" class="ghost">⬇️ Download restaurants.json</button>
+  <button id="copy" class="ghost">📋 Copy</button>
+  <p class="muted">Then replace <code>data/restaurants.json</code> in the GitHub repo (Add file → Upload, or edit and paste) and commit. The site updates in about a minute.</p>
+</main>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var FIDS = ['sweet','sour','salty','bitter','umami'];
+  var TEX = ['crunchy','creamy','chewy','crispy','tender','flaky','juicy','fizzy','silky','spicy-hot'];
+  var norm = function(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\b(the|restaurant|cafe|bar|and|grill|pub)\b/g,'').replace(/[^a-z0-9]/g,''); };
+  var slug = function(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50); };
+  fetch('data/restaurants.json', { cache: 'no-cache' }).then(function(r){ return r.text(); }).then(function(t){ $('current').value = t; $('curStatus').textContent = 'Loaded the current file from the site. You can also paste a different version.'; })
+    .catch(function(){ $('curStatus').textContent = 'Could not load automatically. Paste the contents of data/restaurants.json here.'; });
+
+  function extract(text){
+    var out = [];
+    text.split(/\r?\n/).forEach(function(line){
+      var i = line.indexOf('{'); if (i < 0) return;
+      var j = line.lastIndexOf('}'); if (j <= i) return;
+      try { var o = JSON.parse(line.slice(i, j + 1)); if (o && o.fq && o.restaurant && o.dish) out.push(o); } catch (e) {}
+    });
+    return out;
+  }
+  $('merge').onclick = function(){
+    var log = $('log'); log.innerHTML = ''; $('report').hidden = false;
+    var add = function(cls, msg){ var li = document.createElement('li'); li.className = cls; li.textContent = msg; log.appendChild(li); };
+    var data;
+    try { data = JSON.parse($('current').value); } catch (e) { add('bad', 'Current restaurants.json is not valid JSON: ' + e.message); return; }
+    var list = data.restaurants || (data.restaurants = []);
+    var subs = extract($('lines').value);
+    if (!subs.length) { add('bad', 'No submission lines found.'); return; }
+    var overwrite = $('overwrite').checked, verified = $('markVerified').checked;
+    var nNewR = 0, nNewD = 0, nUpd = 0, nSkip = 0;
+    subs.forEach(function(s){
+      var sr = s.restaurant, sd = s.dish;
+      var flavors = FIDS.filter(function(f){ return (sd.flavors||[]).indexOf(f) >= 0; });
+      var textures = (sd.textures||[]).filter(function(t){ return TEX.indexOf(t) >= 0; });
+      if (!sr.name || !sd.name || !flavors.length) { add('bad', 'Skipped an incomplete line (' + (sd.name||'?') + ')'); nSkip++; return; }
+      var r = list.find(function(x){ return x.id === sr.id; }) || list.find(function(x){ return norm(x.name) === norm(sr.name) && (!sr.village || !x.village || x.village === sr.village || x.town === sr.town); });
+      if (!r) {
+        var id = sr.id && !/^custom-/.test(sr.id) ? (/^osm-/.test(sr.id) ? slug(sr.name + ' ' + (sr.village || sr.town || '')) : sr.id) : slug(sr.name + ' ' + (sr.village || sr.town || ''));
+        while (list.some(function(x){ return x.id === id; })) id += '-2';
+        r = { id: id, name: sr.name, town: sr.town || 'Falmouth', village: sr.village || '', address: sr.address || '', lat: sr.lat || null, lng: sr.lng || null,
+              cuisine: sr.cuisine || '', website: sr.website || '', participating: false, featured: false, addedFrom: 'player submission' + (sr.osm ? ' (OSM ' + sr.osm + ')' : ''), dishes: [] };
+        list.push(r); nNewR++; add('ok', 'New restaurant: ' + r.name + ' (id ' + r.id + ')');
+      }
+      r.dishes = r.dishes || [];
+      var d = r.dishes.find(function(x){ return norm(x.name) === norm(sd.name); });
+      if (d) {
+        if (overwrite) { d.flavors = flavors; d.textures = textures; d.playerConfirmed = true; if (verified) delete d.suggested; nUpd++; add('warn', 'Updated ' + d.name + ' @ ' + r.name + ' → ' + flavors.join('+')); }
+        else { d.playerConfirmed = true; nSkip++; add('', 'Already listed: ' + d.name + ' @ ' + r.name + ' (kept existing tags; marked player-confirmed)'); }
+      } else {
+        var nd = { name: sd.name, flavors: flavors, textures: textures };
+        if (!verified) nd.suggested = true;
+        nd.playerConfirmed = true;
+        r.dishes.push(nd); nNewD++; add('ok', 'Added dish: ' + sd.name + ' @ ' + r.name + ' → ' + flavors.join('+'));
+      }
+    });
+    data.updated = new Date().toISOString().slice(0, 10);
+    $('out').value = JSON.stringify(data, null, 1);
+    add('', 'Summary: ' + subs.length + ' lines · ' + nNewR + ' new restaurants · ' + nNewD + ' new dishes · ' + nUpd + ' updated · ' + nSkip + ' unchanged/skipped');
+  };
+  $('download').onclick = function(){
+    if (!$('out').value) return alert('Merge first.');
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([$('out').value], { type: 'application/json' })); a.download = 'restaurants.json';
+    document.body.appendChild(a); a.click(); setTimeout(function(){ a.remove(); }, 500);
+  };
+  $('copy').onclick = function(){ $('out').select(); try { navigator.clipboard.writeText($('out').value); } catch (e) { document.execCommand('copy'); } };
+})();
+</script>
+</body>
+</html>

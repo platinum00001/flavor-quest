@@ -28,7 +28,7 @@
 <header>
   <h1>🍽️ QR check-in codes</h1>
   <p class="muted">Print these and place them at participating restaurants. Scanning opens Flavor Quest, checks the player in (+XP, once per restaurant per day), and shows the restaurant page.</p>
-  <div class="bar"><label class="muted" for="base">Site URL:</label><input id="base"><button onclick="window.print()">🖨️ Print</button></div>
+  <div class="bar"><label class="muted" for="base">Site URL:</label><input id="base"><label class="muted"><input type="checkbox" id="all"> Show all restaurants (not only participating)</label><button onclick="window.print()">🖨️ Print</button></div>
 </header>
 <div class="grid" id="grid"></div>
 <script src="js/qrcode.js"></script>
@@ -40,17 +40,17 @@
   function draw(){
     var base = baseInput.value.trim();
     if (base && !/\/$/.test(base)) base += '/';
-    document.getElementById('grid').innerHTML = list.map(function(r){
+    document.getElementById('grid').innerHTML = list.filter(function(r){ return document.getElementById('all').checked || r.participating; }).map(function(r){
       var url = base + '?r=' + encodeURIComponent(r.id);
       var qr = qrcode(0, 'M'); qr.addData(url); qr.make();
       var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
       return '<div class="tent"><div class="brand">Flavor Quest</div><div class="cta">Scan to check in &amp; earn XP</div>' +
         '<div class="qr">' + qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true }) + '</div>' +
-        '<div class="name">' + esc(r.name) + '</div>' + (r.placeholder ? '<div class="sample">SAMPLE – not a real business</div>' : '') +
+        '<div class="name">' + esc(r.name) + '</div>' + (r.participating ? '' : '<div class="sample">Not yet participating</div>') +
         '<div class="url">' + esc(url) + '</div></div>';
     }).join('');
   }
-  baseInput.addEventListener('input', draw);
+  baseInput.addEventListener('input', draw); document.getElementById('all').addEventListener('change', draw);
   fetch('data/restaurants.json', { cache: 'no-cache' }).then(function(r){ return r.json(); }).then(function(d){ list = d.restaurants || []; draw(); })
     .catch(function(){ document.getElementById('grid').innerHTML = '<p>Could not load data/restaurants.json (open this page from a web server).</p>'; });
 })();

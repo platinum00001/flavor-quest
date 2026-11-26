@@ -11,7 +11,9 @@
     RECEIPT_MAX: 260,            // receipt thumbnail max edge (px)
     XP: { dish: 10, photo: 5, receipt: 15, texture: 20, bonusRound: 200, checkin: 25,
           node: { 1: 50, 2: 75, 3: 100, 4: 150, 5: 500 } },
-    STORAGE_KEY: 'flavorQuest.v1'
+    STORAGE_KEY: 'flavorQuest.v1',
+    NEARBY_RADIUS_M: 3000,       // radius for discovering new spots via OpenStreetMap
+    SUBMIT_EMAILS: ['capeislandcafe@gmail.com', 'capeislandllc@gmail.com']
   };
 
   const FLAVORS = [
@@ -133,7 +135,7 @@
   let draft = newDraft();
 
   function blankState() {
-    return { version: 1, profile: null, dishes: [], checkins: [], customRestaurants: [], created: Date.now() };
+    return { version: 1, profile: null, dishes: [], checkins: [], customRestaurants: [], contrib: [], created: Date.now() };
   }
   function load() {
     try {
@@ -147,7 +149,7 @@
     catch (e) { toast('⚠️', 'Your phone storage for this site is full. Try exporting, then removing some photos.'); return false; }
   }
   function newDraft(pre) {
-    return Object.assign({ restaurantId: '', newName: '', town: '', dish: '', flavors: [], textures: [], photo: '', receipt: '' }, pre || {});
+    return Object.assign({ restaurantId: '', knownIdx: '', newName: '', town: '', dish: '', flavors: [], textures: [], photo: '', receipt: '' }, pre || {});
   }
 
   // ---------- Derivation: everything (XP, badges, unlocks) is computed from the dish log ----------
@@ -225,7 +227,7 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const fmtDate = ts => new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-  const allRestaurants = () => restaurants.concat(state.customRestaurants || []);
+  const allRestaurants = () => mergedRestaurants;
   const rById = id => allRestaurants().find(r => r.id === id);
   const avatarHTML = (id, cls) => { const a = AV[id] || AVATARS[0]; return `<span class="avatar ${cls || ''}" style="background:${a.bg}">${a.icon}</span>`; };
   const flavorTags = ids => FIDS.filter(id => (ids || []).includes(id)).map(id => `<span style="background:${F[id].color}">${F[id].name}</span>`).join('');
@@ -303,10 +305,11 @@
     $('#xpFill').style.width = L.pct + '%';
     $('#xpText').textContent = `${derived.xp} XP · ${L.hi - derived.xp} to Lv ${L.n + 1}`;
     const tab = currentTab();
-    $$('.bottomnav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    $$('.bottomnav button').forEach(b => b.classList.toggle('active', b.dataset.tab === (tab === 'nearby' ? 'home' : tab)));
   }
   const currentTab = () => (location.hash.replace(/^#\/?/, '').split('?')[0] || 'home');
   let ignoreHash = false;
+  let lastTab = '';
   function go(tab) { if (currentTab() === tab) render(); else location.hash = '#/' + tab; }
   // Switch tab and render synchronously (keeps any sheet we open right after)
   function setTab(tab) { if (currentTab() !== tab) { ignoreHash = true; location.hash = '#/' + tab; } render(); }
@@ -318,9 +321,12 @@
     if (!state.profile) { v.classList.add('onboard'); renderChrome(); return renderOnboarding(v); }
     renderChrome();
     const tab = currentTab();
-    const views = { home: renderHome, tree: renderTree, log: renderLog, journal: renderJournal, rewards: renderRewards };
+    v.classList.toggle('noanim', tab === lastTab);
+    const sameTab = tab === lastTab, y = window.scrollY;
+    lastTab = tab;
+    const views = { home: renderHome, tree: renderTree, log: renderLog, journal: renderJournal, rewards: renderRewards, nearby: renderNearby };
     (views[tab] || renderHome)(v);
-    window.scrollTo(0, 0);
+    window.scrollTo(0, sameTab && tab === 'nearby' ? y : 0);
   }
 
   // ---------- Onboarding ----------
@@ -416,17 +422,22 @@
     const gCount = gp ? gp.dishes.length : 0, gRest = gp ? gp.restaurants.size : 0;
     const nComplete = Object.keys(d.completed).length;
     const nTowns = Object.keys(d.towns).filter(t => TOWN_IDS.includes(t)).length;
-    const list = allRestaurants().slice().sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || (a.placeholder ? 1 : 0) - (b.placeholder ? 1 : 0));
+    const all = allRestaurants();
+    const featured = all.filter(r => r.featured);
+    const groups = {};
+    all.filter(r => !r.featured).forEach(r => { const g = r.village || r.town || 'Other'; (groups[g] = groups[g] || []).push(r); });
+    const order = Object.keys(groups).sort((a, b) => a.localeCompare(b));
     v.innerHTML = `
       <div class="card hero">
         <div class="row">${avatarHTML(state.profile.avatar)}<div><h2 style="margin:0">Ahoy, ${esc(state.profile.name)}!</h2><p style="margin:2px 0 0">Next stop on your flavor quest:</p></div></div>
         <div style="margin-top:14px;background:rgba(255,255,255,.14);border-radius:14px;padding:12px">
-          <div class="spread"><b style="font-size:17px">${nodeName(goal)}</b><span class="pill light" style="background:#fff;color:var(--sea)">${LEVEL_SINGULAR[goal.level]}</span></div>
+          <div class="spread"><b style="font-size:17px">${nodeName(goal)}</b><span class="pill" style="background:#fff;color:var(--sea)">${LEVEL_SINGULAR[goal.level]}</span></div>
           <div class="meter" style="background:rgba(255,255,255,.25)"><i style="width:${Math.min(100, 100 * gCount / CONFIG.DISHES_PER_NODE)}%;background:linear-gradient(90deg,#ffd36b,#ff8f4f)"></i></div>
           <small style="color:#dff3fa">${gCount}/${CONFIG.DISHES_PER_NODE} dishes · ${gRest}/${CONFIG.RESTAURANTS_PER_NODE} restaurants</small>
         </div>
-        <div class="row" style="margin-top:12px"><button class="btn light small" data-logfor="${goal.key}">＋ Log a ${esc(nodeShort(goal))} dish</button><button class="btn small" style="background:rgba(255,255,255,.18);box-shadow:none" data-go="tree">View tree</button></div>
+        <div class="row wrap" style="margin-top:12px"><button class="btn light small" data-logfor="${goal.key}">＋ Log a ${esc(nodeShort(goal))} dish</button><button class="btn small" style="background:rgba(255,255,255,.18);box-shadow:none" data-node="${goal.key}">Where to find it</button></div>
       </div>
+      <button class="btn coral block" data-go="nearby" style="margin-bottom:14px">📍 Find flavors near me</button>
       <div class="stats">
         <div class="stat"><b>${state.dishes.length}</b><small>Dishes</small></div>
         <div class="stat"><b>${nComplete}</b><small>Nodes</small></div>
@@ -435,19 +446,32 @@
       </div>
       <div class="card mapcard"><span class="maplabel">Your Cape Cod map</span>${mapSVG()}
         <small style="display:block;text-align:center;color:var(--sea-dark)">Towns light up as you log dishes there. Tap a town.</small></div>
-      <div class="section-title"><h2>Restaurants</h2><small>${list.filter(r => r.participating).length} participating</small></div>
-      <div class="rlist">${list.map(rCardHTML).join('')}</div>
-      <p class="footer-note">At a participating restaurant? Scan its Flavor Quest QR code to check in for +${CONFIG.XP.checkin} XP.</p>`;
+      <div class="section-title"><h2>Restaurants</h2><small>${all.length} in Falmouth &amp; Woods Hole</small></div>
+      <div class="rlist">${featured.map(r => rCardHTML(r)).join('')}</div>
+      ${order.map(g => `<details class="village" ${g === 'Woods Hole' || g === 'Falmouth Village' ? '' : ''}><summary><b>${esc(g)}</b> <small>${groups[g].length} spot${groups[g].length > 1 ? 's' : ''}</small></summary>
+        <div class="rlist">${groups[g].sort((a, b) => a.name.localeCompare(b.name)).map(r => rCardHTML(r)).join('')}</div></details>`).join('')}
+      <p class="footer-note">At a participating restaurant? Scan its Flavor Quest QR code to check in for +${CONFIG.XP.checkin} XP.<br>Know a dish we're missing? Open any restaurant and tap "Add a dish".</p>`;
     bindCommon(v);
     $$('[data-town]', v).forEach(g => g.onclick = () => openTown(g.dataset.town));
   }
-  function rCardHTML(r) {
+  function rCardHTML(r, extra) {
     const mine = state.dishes.filter(d => d.restaurantId === r.id).length;
-    const status = r.placeholder ? '<span class="pill gray">Sample</span>' : r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating</span>' : '';
+    const nd = (r.dishes || []).length;
+    const status = r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating</span>' : '';
+    const dots = [...new Set((r.dishes || []).flatMap(d => d.flavors || []))];
     return `<button class="rcard ${r.featured ? 'featured' : ''}" data-rest="${esc(r.id)}">
-      <span class="ricon">${r.featured ? '⭐' : r.placeholder ? '🏷️' : '🍴'}</span>
-      <span class="rmeta"><b>${esc(r.name)}</b><small>${esc(r.town || '')}${mine ? ` · ${mine} dish${mine > 1 ? 'es' : ''} logged` : ''}</small><span class="row wrap" style="gap:4px;margin-top:4px">${r.featured ? '<span class="pill gold">Featured</span>' : ''}${status}${r.giftCertificate ? '<span class="pill coral">Gift card deal</span>' : ''}</span></span>
+      <span class="ricon">${r.featured ? '⭐' : cuisineIcon(r)}</span>
+      <span class="rmeta"><b>${esc(r.name)}</b><small>${esc(r.village || r.town || '')}${r.cuisine ? ' · ' + esc(r.cuisine) : ''}</small>
+      <small>${extra || ''}${nd ? `${nd} dish${nd > 1 ? 'es' : ''} to try` : 'No dishes tagged yet'}${mine ? ` · ${mine} logged by you` : ''} ${FIDS.filter(f => dots.includes(f)).map(f => `<span class="dot" style="background:${F[f].color}"></span>`).join(' ')}</small>
+      <span class="row wrap" style="gap:4px;margin-top:4px">${r.featured ? '<span class="pill gold">Featured</span>' : ''}${status}${r.giftCertificate ? '<span class="pill coral">Gift card deal</span>' : ''}</span></span>
       <span class="chev">›</span></button>`;
+  }
+  function cuisineIcon(r) {
+    const c = ((r.cuisine || '') + ' ' + r.name).toLowerCase();
+    const map = [[/raw bar|oyster/, '🦪'], [/sushi|ramen|japanese/, '🍣'], [/clam|seafood|fish|lobster/, '🦞'], [/pizza/, '🍕'], [/mexican|taco/, '🌮'],
+      [/bakery|pastry|croissant/, '🥐'], [/coffee|café|cafe/, '☕'], [/italian/, '🍝'], [/thai|indian|asian/, '🍛'], [/pub|tap|bar/, '🍺'], [/diner|breakfast/, '🥞'], [/ice cream/, '🍦'], [/greek/, '🥙']];
+    const m = map.find(([re]) => re.test(c));
+    return m ? m[1] : '🍴';
   }
   function bindCommon(root) {
     $$('[data-rest]', root).forEach(b => b.onclick = () => openRestaurant(b.dataset.rest));
@@ -461,6 +485,15 @@
     });
     $$('[data-node]', root).forEach(b => b.onclick = () => openNode(b.dataset.node));
     $$('[data-dish]', root).forEach(b => b.onclick = () => openDish(b.dataset.dish));
+    const dishRef = v => { const [rid, i] = v.split('|'); const r = rById(rid); return r ? [r, (r.dishes || [])[+i]] : [null, null]; };
+    $$('[data-logdish]', root).forEach(b => b.onclick = () => {
+      const [r, dsh] = dishRef(b.dataset.logdish); if (!r || !dsh) return;
+      closeSheet();
+      draft = newDraft({ restaurantId: r.id, town: r.town || '', knownIdx: r.dishes.indexOf(dsh), dish: dsh.name, flavors: (dsh.flavors || []).slice(), textures: (dsh.textures || []).filter(t => T[t]) });
+      go('log');
+    });
+    $$('[data-confirm]', root).forEach(b => b.onclick = () => { const [r, dsh] = dishRef(b.dataset.confirm); if (r && dsh) openContribute({ restaurant: r, dish: dsh }); });
+    $$('[data-adddish]', root).forEach(b => b.onclick = () => openContribute({ restaurantId: b.dataset.adddish }));
   }
 
   function openTown(town) {
@@ -484,20 +517,47 @@
       <div class="gp">for <b style="font-size:20px">$${esc(g.price)}</b> <s>$${esc(g.value)}</s> · save $${esc(g.value - g.price)}</div>
       <div style="margin-top:12px">${live ? `<a class="btn light small" href="${esc(g.checkoutUrl)}" target="_blank" rel="noopener">Buy now →</a>` : '<span class="btn light small disabled" aria-disabled="true">Coming soon</span>'}</div></div>`;
   }
+  function dishRowHTML(r, dish, i) {
+    return `<div class="dishrow">
+      <div class="dr-main"><b>${esc(dish.name)}</b>
+        <span class="mini-flavors">${texTags(dish.textures)}</span>
+        <small>${dish.mine ? '🙋 Added by you' : dish.suggested ? '💡 Likely dish (unverified)' : '✓ On the menu'}</small></div>
+      <div class="dr-act"><button class="btn small coral" data-logdish="${esc(r.id)}|${i}">Log</button>
+        <button class="btn small ghost" data-confirm="${esc(r.id)}|${i}" title="Confirm or fix flavors">✎</button></div></div>`;
+  }
+  function dishesByComboHTML(r) {
+    const dishes = r.dishes || [];
+    if (!dishes.length) return '<p class="muted">No dishes tagged here yet — be the first!</p>';
+    const groups = {};
+    dishes.forEach((dsh, i) => { const k = keyOf(dsh.flavors || []) || 'none'; (groups[k] = groups[k] || []).push([dsh, i]); });
+    const keys = Object.keys(groups).sort((a, b) => (NODE[a] ? NODE[a].level : 9) - (NODE[b] ? NODE[b].level : 9) || a.localeCompare(b));
+    return keys.map(k => {
+      const n = NODE[k];
+      const s = n ? nodeState(k) : 'locked';
+      const badge = { locked: '🔒 locked', unlocked: '🔓 open', progress: '🍴 in progress', complete: '⭐ complete' }[s];
+      return `<div class="combo"><div class="combo-head">${n ? `<span class="orb-mini" style="background:${orbBg(n)}"></span><a href="javascript:void 0" data-node="${k}"><b>${esc(nodeName(n))}</b></a>` : '<b>Untagged</b>'}<small>${n ? badge : ''}</small></div>
+        ${groups[k].map(([dsh, i]) => dishRowHTML(r, dsh, i)).join('')}</div>`;
+    }).join('');
+  }
   function openRestaurant(id) {
     const r = rById(id);
     if (!r) return toast('❓', 'Unknown restaurant');
     const dishes = state.dishes.filter(d => d.restaurantId === r.id).sort((a, b) => b.ts - a.ts);
     const lastCi = (state.checkins || []).filter(c => c.rid === r.id).sort((a, b) => b.ts - a.ts)[0];
     const checkedToday = lastCi && lastCi.date === today();
-    openSheet(`<div class="row wrap" style="gap:6px;margin-bottom:6px">${r.featured ? '<span class="pill gold">⭐ Featured</span>' : ''}${r.placeholder ? '<span class="pill gray">Sample listing – not a real business</span>' : r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating restaurant</span>' : '<span class="pill gray">Not yet participating</span>'}</div>
+    const dist = here && r.lat ? ` · ${fmtDist(distKm(here, r))} away` : '';
+    openSheet(`<div class="row wrap" style="gap:6px;margin-bottom:6px">${r.featured ? '<span class="pill gold">⭐ Featured</span>' : ''}${r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating restaurant</span>' : '<span class="pill gray">Not yet participating</span>'}${r.cuisine ? `<span class="pill">${esc(r.cuisine)}</span>` : ''}</div>
       <h2>${esc(r.name)}</h2>
-      <p class="muted" style="margin:0">📍 ${esc(r.town || 'Cape Cod')}${r.address && !r.placeholder ? ' · ' + esc(r.address) : ''}</p>
-      ${r.hours && !r.placeholder ? `<p class="muted" style="margin:2px 0 8px">🕚 ${esc(r.hours)}</p>` : ''}
+      <p class="muted" style="margin:0">📍 ${esc(r.address || r.village || r.town || 'Cape Cod')}${dist}</p>
+      ${r.hours ? `<p class="muted" style="margin:2px 0 0">🕚 ${esc(r.hours)}</p>` : ''}
+      <p class="row wrap" style="gap:12px;margin:6px 0 8px;font-size:14px">${r.website ? `<a href="${esc(r.website)}" target="_blank" rel="noopener">🌐 Website</a>` : ''}${r.lat ? `<a href="https://www.openstreetmap.org/?mlat=${r.lat}&mlon=${r.lng}#map=18/${r.lat}/${r.lng}" target="_blank" rel="noopener">🗺️ Map</a>` : ''}</p>
       ${r.description ? `<p>${esc(r.description)}</p>` : ''}
       ${checkedToday ? '<div class="preview-note">✅ Checked in today. Come back tomorrow for another check-in bonus.</div>' : r.participating ? `<div class="preview-note">📱 Scan this restaurant's Flavor Quest QR code on-site to check in for +${CONFIG.XP.checkin} XP.</div>` : ''}
       ${giftHTML(r)}
-      <button class="btn coral block" data-logat="${esc(r.id)}">＋ Log a dish here</button>
+      <div class="spread" style="margin-top:14px"><h3 style="margin:0">Dishes by flavor combo</h3><button class="btn small ghost" data-adddish="${esc(r.id)}">＋ Add a dish</button></div>
+      <p class="hint" style="margin-top:2px">"Likely" dishes haven't been checked against the menu yet. Tap ✎ to confirm or fix the flavors.</p>
+      ${dishesByComboHTML(r)}
+      <button class="btn coral block" data-logat="${esc(r.id)}" style="margin-top:12px">＋ Log something else here</button>
       ${dishes.length ? `<h3 style="margin-top:18px">Your dishes here</h3>${dishes.map(jItemHTML).join('')}` : ''}`, bindCommon);
   }
   function checkIn(rid) {
@@ -555,6 +615,12 @@
       <div class="tree">${tiers}</div>`;
     bindCommon(v);
   }
+  function whereToFind(key) {
+    const out = [];
+    allRestaurants().forEach(r => (r.dishes || []).forEach((dsh, i) => { if (keyOf(dsh.flavors || []) === key) out.push({ r, dsh, i }); }));
+    if (here) out.sort((a, b) => (a.r.lat ? distKm(here, a.r) : 1e9) - (b.r.lat ? distKm(here, b.r) : 1e9));
+    return out;
+  }
   function openNode(key) {
     const n = NODE[key];
     const s = nodeState(key);
@@ -563,6 +629,7 @@
     const statusTxt = { locked: '🔒 Locked', unlocked: '🔓 Unlocked — ready to start', progress: '🍴 In progress', complete: '⭐ Complete!' }[s];
     const subs = subKeys(n), sups = superKeys(n);
     const chips = n.ids.map(id => `<span class="chip on" style="background:${F[id].color}">${F[id].icon} ${F[id].name}</span>`).join('');
+    const where = whereToFind(key);
     openSheet(`<small class="muted" style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">Level ${n.level} · ${LEVEL_SINGULAR[n.level]}</small>
       <h2>${esc(nodeName(n))}</h2>
       <div class="chips" style="margin-bottom:10px">${chips}</div>
@@ -578,9 +645,16 @@
       ${sups.length ? `<p class="muted" style="font-size:14px">Completing this unlocks: ${sups.map(k => `<a href="javascript:void 0" data-node="${k}">${esc(nodeShort(NODE[k]))}</a>`).join(', ')}</p>` : ''}
       ${s !== 'complete' && s !== 'locked' ? `<button class="btn coral block" data-logfor="${key}">＋ Log a ${esc(nodeShort(n))} dish</button>` : ''}
       ${s === 'locked' ? '<p class="preview-note warn">You can still log dishes with these flavors — they go in your journal, but only count here once the node is unlocked.</p>' : ''}
-      ${p && p.dishes.length ? `<h3 style="margin-top:16px">Dishes counted</h3>${p.dishes.slice().reverse().map(jItemHTML).join('')}` : ''}`, bindCommon);
+      <h3 style="margin-top:16px">📍 Where to find this</h3>
+      ${where.length ? `<div class="where">${where.slice(0, 30).map(w => `<div class="dishrow"><div class="dr-main"><b>${esc(w.dsh.name)}</b><small><a href="javascript:void 0" data-rest="${esc(w.r.id)}">${esc(w.r.name)}</a> · ${esc(w.r.village || w.r.town || '')}${here && w.r.lat ? ' · ' + fmtDist(distKm(here, w.r)) : ''}${w.dsh.suggested ? ' · 💡 likely' : ''}</small></div>
+        <div class="dr-act"><button class="btn small coral" data-logdish="${esc(w.r.id)}|${w.i}">Log</button></div></div>`).join('')}</div>
+        ${where.length > 30 ? `<p class="hint">+${where.length - 30} more</p>` : ''}` : '<p class="muted">No known dishes with exactly this combo yet. Found one? Log it and tap "Share with Flavor Quest".</p>'}
+      <button class="btn ghost block" data-go="nearby" style="margin-top:10px">📍 Find ${esc(nodeShort(n))} near me</button>
+      ${p && p.dishes.length ? `<h3 style="margin-top:16px">Dishes counted</h3>${p.dishes.slice().reverse().map(jItemHTML).join('')}` : ''}`, root => {
+      bindCommon(root);
+      $$('[data-go="nearby"]', root).forEach(b => b.onclick = () => { nearbyFilter = n.ids.slice(0, 4); closeSheet(); go('nearby'); });
+    });
   }
-
   // ---------- Log a dish ----------
   function renderLog(v) {
     const rs = allRestaurants();
@@ -594,21 +668,32 @@
       else note = `<div class="preview-note">✅ Counts toward <b>${esc(nodeName(n))}</b> (${p ? p.dishes.length : 0}/${CONFIG.DISHES_PER_NODE} so far).</div>`;
     }
     const isNew = draft.restaurantId === '__new';
+    const cur = rById(draft.restaurantId);
+    const groups = {};
+    rs.forEach(r => { const g = r.featured ? '⭐ Featured' : (r.village || r.town || 'Other'); (groups[g] = groups[g] || []).push(r); });
+    const gkeys = Object.keys(groups).sort((a, b) => a.startsWith('⭐') ? -1 : b.startsWith('⭐') ? 1 : a.localeCompare(b));
+    const known = cur ? (cur.dishes || []) : [];
     v.innerHTML = `<h1>Log a dish</h1>
       <p class="muted" style="margin-top:-4px">Snap it, tag it, level up.</p>
       <div class="card">
         <label class="field"><span>Restaurant</span>
           <select id="lgRest"><option value="">Choose a restaurant…</option>
-            ${rs.map(r => `<option value="${esc(r.id)}" ${draft.restaurantId === r.id ? 'selected' : ''}>${esc(r.name)}${r.featured ? ' ⭐' : ''}</option>`).join('')}
+            ${gkeys.map(g => `<optgroup label="${esc(g)}">${groups[g].sort((a, b) => a.name.localeCompare(b.name)).map(r => `<option value="${esc(r.id)}" ${draft.restaurantId === r.id ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}</optgroup>`).join('')}
             <option value="__new" ${isNew ? 'selected' : ''}>➕ Add a new restaurant…</option></select></label>
         ${isNew ? `<label class="field"><span>New restaurant name</span><input type="text" id="lgNewName" maxlength="60" value="${esc(draft.newName)}" placeholder="Restaurant name"></label>` : ''}
         <label class="field"><span>Town</span>
           <select id="lgTown"><option value="">Choose a town…</option>${TOWNS.map(t => `<option value="${esc(t.id)}" ${draft.town === t.id ? 'selected' : ''}>${esc(t.label || t.id)}</option>`).join('')}
           <option value="Other" ${draft.town === 'Other' ? 'selected' : ''}>Other / off-Cape</option></select></label>
+        ${known.length ? `<label class="field"><span>What did you order?</span>
+          <select id="lgKnown"><option value="">Pick a dish from ${esc(cur.name)}…</option>
+          ${known.map((k, i) => `<option value="${i}" ${draft.knownIdx === i ? 'selected' : ''}>${esc(k.name)}${k.suggested ? ' (likely)' : ''}</option>`).join('')}
+          <option value="other" ${draft.knownIdx === 'other' ? 'selected' : ''}>Something else (type it)…</option></select>
+          <div class="hint">Picking a dish pre-fills its flavors and textures. Change them if your plate tasted different.</div></label>` : ''}
         <label class="field"><span>Dish name</span><input type="text" id="lgDish" maxlength="80" value="${esc(draft.dish)}" placeholder="e.g. Lobster roll"></label>
       </div>
       <div class="card">
-        <h3>Flavors you tasted</h3><p class="hint" style="margin-top:-4px">Pick every flavor in the dish. The exact combo decides which node it counts toward.</p>
+        <div class="spread"><h3 style="margin:0">Flavors you tasted</h3><button class="btn small ghost" id="lgSuggest">✨ Suggest</button></div>
+        <p class="hint" style="margin-top:4px">Pick every flavor in the dish. The exact combo decides which node it counts toward.</p>
         <div class="chips" id="lgFlavors">${FLAVORS.map(f => `<button class="chip ${draft.flavors.includes(f.id) ? 'on' : ''}" data-f="${f.id}" style="${draft.flavors.includes(f.id) ? 'background:' + f.color : ''}">${f.icon} ${f.name}</button>`).join('')}</div>
         <div style="margin-top:12px">${note}</div>
         <h3 style="margin-top:6px">Textures <small style="font-family:inherit;font-weight:600">· bonus rounds</small></h3>
@@ -629,41 +714,58 @@
       draft.dish = $('#lgDish').value;
       if ($('#lgNewName')) draft.newName = $('#lgNewName').value;
     };
+    const rerender = () => { const y = window.scrollY; renderLog(v); window.scrollTo(0, y); };
     $('#lgRest').onchange = e => {
       sync();
-      draft.restaurantId = e.target.value;
+      draft.restaurantId = e.target.value; draft.knownIdx = '';
       const r = rById(draft.restaurantId);
       if (r && r.town) draft.town = r.town;
-      renderLog(v);
+      rerender();
+    };
+    if ($('#lgKnown')) $('#lgKnown').onchange = e => {
+      const val = e.target.value;
+      draft.knownIdx = val === '' || val === 'other' ? val : +val;
+      if (typeof draft.knownIdx === 'number') {
+        const k = known[draft.knownIdx];
+        draft.dish = k.name; draft.flavors = (k.flavors || []).slice(); draft.textures = (k.textures || []).filter(t => T[t]);
+      } else if (val === 'other') { draft.dish = ''; }
+      rerender();
+      if (val === 'other') $('#lgDish').focus();
     };
     $('#lgTown').onchange = e => { draft.town = e.target.value; };
     $('#lgDish').oninput = sync;
     if ($('#lgNewName')) $('#lgNewName').oninput = sync;
+    $('#lgSuggest').onclick = () => {
+      sync();
+      const sug = suggestFor(draft.dish, cur ? cur.cuisine : '');
+      if (!sug.flavors.length) return toast('🤔', 'Type the dish name first and we\'ll suggest flavors.');
+      draft.flavors = sug.flavors; draft.textures = [...new Set(draft.textures.concat(sug.textures))];
+      rerender(); toast('✨', 'Suggested from the dish name — tweak if needed.');
+    };
     $$('[data-f]', v).forEach(b => b.onclick = () => {
       sync(); const id = b.dataset.f;
       draft.flavors = draft.flavors.includes(id) ? draft.flavors.filter(x => x !== id) : draft.flavors.concat(id);
-      const y = window.scrollY; renderLog(v); window.scrollTo(0, y);
+      rerender();
     });
     $$('[data-t]', v).forEach(b => b.onclick = () => {
       const id = b.dataset.t;
       draft.textures = draft.textures.includes(id) ? draft.textures.filter(x => x !== id) : draft.textures.concat(id);
       b.classList.toggle('on');
     });
-    $$('[data-clear]', v).forEach(b => b.onclick = e => { e.preventDefault(); sync(); draft[b.dataset.clear] = ''; const y = window.scrollY; renderLog(v); window.scrollTo(0, y); });
+    $$('[data-clear]', v).forEach(b => b.onclick = e => { e.preventDefault(); sync(); draft[b.dataset.clear] = ''; rerender(); });
     const pick = (id, field, max) => {
       const inp = $(id); if (!inp) return;
       inp.onchange = async () => {
         const f = inp.files && inp.files[0]; if (!f) return;
         sync();
         try { draft[field] = await resizeImage(f, max); } catch (e) { toast('⚠️', 'Could not read that image.'); }
-        const y = window.scrollY; renderLog(v); window.scrollTo(0, y);
+        rerender();
       };
     };
     pick('#lgPhoto', 'photo', CONFIG.PHOTO_MAX);
     pick('#lgReceipt', 'receipt', CONFIG.RECEIPT_MAX);
     $('#lgSave').onclick = () => { sync(); draft.town = $('#lgTown').value; submitDish(); };
   }
-
   function submitDish() {
     let rid = draft.restaurantId, rname;
     if (!rid) return toast('🏠', 'Choose a restaurant');
@@ -676,6 +778,7 @@
       else {
         rid = 'custom-' + uid();
         state.customRestaurants.push({ id: rid, name, town: draft.town, custom: true, participating: false, description: 'Added by you while logging a dish.' });
+        rebuildRestaurants();
       }
       rname = name;
     } else rname = (rById(rid) || {}).name;
@@ -704,6 +807,8 @@
     const newBonus = Object.keys(after.bonus).filter(t => !before.bonus[t]);
     const counted = after.counted[dish.id];
     const p = after.prog[key];
+    const rr = rById(dish.restaurantId);
+    const shareable = !!rr && !(rr.dishes || []).some(x => normName(x.name) === normName(dish.dish));
     let headline = '🍽️', title = 'Dish logged!';
     if (newBonus.length) { headline = '🎉'; title = 'BONUS ROUND!'; }
     else if (newNodes.length) { headline = newNodes.some(k => NODE[k].level === 5) ? '👑' : '⭐'; title = 'Node complete!'; }
@@ -719,7 +824,11 @@
       ${newBonus.map(t => `<div class="preview-note" style="background:linear-gradient(135deg,#fff3d6,#ffe0d6)">🎉 <b>${esc(T[t].name)} Bonus Round!</b> You found ${esc(T[t].name.toLowerCase())} on ${CONFIG.BONUS_ROUND_NODES} different flavor nodes. +${CONFIG.XP.bonusRound} XP</div>`).join('')}
       ${newlyUnlocked.length ? `<div class="preview-note">🔓 Newly unlocked: ${newlyUnlocked.map(x => `<a href="javascript:void 0" data-node="${x.key}">${esc(nodeShort(x))}</a>`).join(', ')}</div>` : ''}
       ${newBadges.length ? `<h3>New badges</h3><div class="badges" style="margin-bottom:14px">${newBadges.map(b => `<div class="badge"><span class="bi">${BADGE[b].icon}</span>${esc(BADGE[b].name)}</div>`).join('')}</div>` : ''}
-      <div class="row"><button class="btn block" data-go="tree" style="flex:1">See tree</button><button class="btn ghost block" data-go="log" style="flex:1">Log another</button></div>`, bindCommon);
+      ${shareable ? `<div class="preview-note">🆕 This dish isn't on our list for ${esc(dish.restaurantName)} yet. <button class="btn small coral" id="shareDish" style="margin-top:6px">Share with Flavor Quest</button></div>` : ''}
+      <div class="row"><button class="btn block" data-go="tree" style="flex:1">See tree</button><button class="btn ghost block" data-go="log" style="flex:1">Log another</button></div>`, root => {
+        bindCommon(root);
+        if ($('#shareDish', root)) $('#shareDish', root).onclick = () => openContribute({ restaurantId: dish.restaurantId, dish: { name: dish.dish, flavors: dish.flavors, textures: dish.textures } });
+      });
     if (newBonus.length) confetti(220);
     else if (newNodes.length) confetti(120);
   }
@@ -832,7 +941,7 @@
             const data = JSON.parse(rd.result);
             if (!data || !data.profile || !Array.isArray(data.dishes)) throw new Error('bad');
             if (!confirm(`Import save for "${data.profile.name}" with ${data.dishes.length} dishes? This replaces your current progress.`)) return;
-            state = Object.assign(blankState(), data); save(); closeSheet(); render(); toast('✅', 'Progress imported');
+            state = Object.assign(blankState(), data); save(); rebuildRestaurants(); closeSheet(); render(); toast('✅', 'Progress imported');
           } catch (err) { toast('⚠️', 'That file is not a Flavor Quest save.'); }
         };
         rd.readAsText(f);
@@ -840,7 +949,7 @@
       $('#stHelp', root).onclick = openHelp;
       $('#stReset', root).onclick = () => {
         if (!confirm('Reset ALL progress? This cannot be undone (export a backup first).')) return;
-        state = blankState(); save(); onb = { step: 0, avatar: 'lobster', name: '', flavor: null }; closeSheet(); setTab('home');
+        state = blankState(); save(); rebuildRestaurants(); onb = { step: 0, avatar: 'lobster', name: '', flavor: null }; closeSheet(); setTab('home');
       };
     });
   }
@@ -855,6 +964,337 @@
       <button class="btn block" data-go="tree" style="margin-top:14px">Go to the tree</button>`, bindCommon);
   }
 
+  // ---------- Restaurant data merge (base JSON + player's custom restaurants + confirmed dishes) ----------
+  let mergedRestaurants = [];
+  function rebuildRestaurants() {
+    const list = restaurants.map(r => Object.assign({}, r, { dishes: (r.dishes || []).map(d => Object.assign({}, d)) }));
+    (state.customRestaurants || []).forEach(c => { if (!list.some(r => r.id === c.id)) list.push(Object.assign({ dishes: [] }, c, { dishes: (c.dishes || []).slice() })); });
+    (state.contrib || []).forEach(c => {
+      let r = list.find(x => x.id === c.restaurant.id);
+      if (!r) { r = Object.assign({ town: 'Falmouth', participating: false, custom: true, dishes: [] }, c.restaurant, { dishes: [] }); list.push(r); }
+      if (!c.dish || !c.dish.name) return;
+      const idx = r.dishes.findIndex(d => normName(d.name) === normName(c.dish.name));
+      const dish = { name: c.dish.name, flavors: c.dish.flavors.slice(), textures: c.dish.textures.slice(), mine: true };
+      if (idx >= 0) r.dishes[idx] = Object.assign({}, r.dishes[idx], dish); else r.dishes.push(dish);
+    });
+    mergedRestaurants = list;
+  }
+  const normName = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\b(the|restaurant|cafe|bar|and|grill|pub)\b/g, '').replace(/[^a-z0-9]/g, '');
+
+  // ---------- Geo ----------
+  const TOWN_LL = { Bourne: [41.741, -70.599], Sandwich: [41.759, -70.494], Falmouth: [41.551, -70.615], Mashpee: [41.648, -70.481], 'Barnstable/Hyannis': [41.653, -70.282],
+    Yarmouth: [41.706, -70.228], Dennis: [41.735, -70.194], Brewster: [41.760, -70.083], Harwich: [41.686, -70.076], Chatham: [41.682, -69.960], Orleans: [41.790, -69.990],
+    Eastham: [41.830, -69.974], Wellfleet: [41.937, -70.033], Truro: [41.994, -70.050], Provincetown: [42.052, -70.186] };
+  const AREAS = [
+    { id: 'falmouth', label: 'Falmouth Village (Main St)', lat: 41.5515, lng: -70.6148 },
+    { id: 'woodshole', label: 'Woods Hole', lat: 41.5265, lng: -70.6731 },
+    { id: 'heights', label: 'Falmouth Heights / Harbor', lat: 41.5465, lng: -70.6010 },
+    { id: 'teaticket', label: 'Teaticket / East Falmouth', lat: 41.5640, lng: -70.5960 },
+    { id: 'northfalmouth', label: 'North / West Falmouth', lat: 41.6440, lng: -70.6160 }
+  ];
+  let here = null;           // { lat, lng, label, source }
+  let nearbyFilter = [];     // flavor ids from the dropdowns
+  let nearbyMatch = 'exact';
+  let osmSpots = { key: '', status: 'idle', list: [], error: '' };
+  function distKm(a, b) {
+    const R = 6371, toR = x => x * Math.PI / 180;
+    const dLat = toR(b.lat - a.lat), dLng = toR(b.lng - a.lng);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(toR(a.lat)) * Math.cos(toR(b.lat)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+  const fmtDist = km => { const mi = km * 0.621371; return mi < 0.1 ? `${Math.round(mi * 5280 / 10) * 10} ft` : `${mi < 10 ? mi.toFixed(1) : Math.round(mi)} mi`; };
+  function nearestTown(lat, lng) {
+    let best = 'Falmouth', bd = 1e9;
+    Object.entries(TOWN_LL).forEach(([t, [la, lo]]) => { const dd = distKm({ lat, lng }, { lat: la, lng: lo }); if (dd < bd) { bd = dd; best = t; } });
+    return best;
+  }
+
+  // Village of the closest known restaurant (within ~1.5 km), so new spots group with their neighbours
+  function nearestVillage(lat, lng, known) {
+    let best = '', bd = 1.5;
+    (known || []).forEach(k => { if (k.lat && k.village && !k.custom) { const dd = distKm({ lat, lng }, k); if (dd < bd) { bd = dd; best = k.village; } } });
+    return best;
+  }
+
+  // ---------- Flavor suggestions from keywords (dish name, then cuisine) ----------
+  const RULES = [
+    [/chowd|bisque/, ['salty', 'umami'], ['creamy']],
+    [/lobster roll|crab roll|lobster salad/, ['sweet', 'salty'], ['tender']],
+    [/lobster|crab/, ['sweet', 'salty'], ['tender']],
+    [/clam strip|fried clam|whole belly|clam belly|clam roll|clam plate/, ['salty', 'umami'], ['crispy', 'chewy']],
+    [/fish (&|and|n) chips|fish ?n ?chips/, ['salty', 'sour'], ['crispy', 'flaky']],
+    [/quahog|stuffie|clams casino/, ['salty', 'umami'], ['crunchy', 'chewy']],
+    [/oyster|littleneck|cherrystone|raw bar|crudo|sashimi|nigiri|poke|tartare/, ['salty', 'umami'], ['silky']],
+    [/scallop/, ['sweet', 'salty'], ['tender']],
+    [/shrimp|prawn/, ['sweet', 'salty'], ['juicy']],
+    [/kale soup|portuguese|linguic|linguiç|chouri|chorizo|sausage|bacon|pepperoni|ham\b/, ['salty', 'umami'], ['chewy']],
+    [/cranberr/, ['sour', 'sweet'], ['juicy']],
+    [/lemon|lime|citrus|vinegar|pickle|kimchi|ceviche|sour|tamarind|yogurt|tzatziki|key lime|margarita|lassi/, ['sour'], []],
+    [/coffee|espresso|cold brew|latte|americano|cappuccino|macchiato/, ['bitter'], ['silky']],
+    [/mocha|tiramisu/, ['sweet', 'bitter'], ['creamy']],
+    [/\bipa\b|beer|\bale\b|stout|porter|guinness|lager|hops/, ['bitter'], ['fizzy']],
+    [/arugula|radicchio|endive|kale salad|raw kale|broccoli rabe|rapini|grapefruit|matcha|dark chocolate|cocoa|bitter|espresso/, ['bitter'], ['crunchy']],
+    [/chocolate|brownie|fudge/, ['sweet', 'bitter'], ['creamy']],
+    [/pie|cake|croissant|donut|doughnut|malasada|muffin|cookie|tart|pastry|french toast|pancake|waffle|cupcake|honey|maple|caramel|candied|sweet bread|scone|cinnamon|baklava|eclair|éclair|mango|dessert|sundae|bubble tea/, ['sweet'], []],
+    [/ice cream|gelato|frozen|frappe|milkshake|soft serve/, ['sweet'], ['creamy']],
+    [/croissant|pastry|baklava|strudel|pot pie|empanada|spanakopita|scone|biscuit/, [], ['flaky']],
+    [/soda|seltzer|sparkling|spritz|tonic|kombucha|cider|champagne|prosecco/, [], ['fizzy']],
+    [/ramen|miso|soy|shoyu|broth|mushroom|parmesan|parmigiano|bolognese|beef|steak|burger|short rib|pork|duck|cheese|gravy|stew|confit|risotto|anchov|truffle/, ['salty', 'umami'], []],
+    [/pizza|margherita/, ['salty', 'umami', 'sour'], ['chewy', 'crispy']],
+    [/taco|burrito|nacho|salsa|quesadilla|enchilada|tostada/, ['salty', 'sour'], ['crunchy']],
+    [/curry|vindaloo|tikka|masala|korma/, ['salty', 'umami'], ['creamy']],
+    [/pad thai/, ['sweet', 'sour', 'salty', 'umami'], ['chewy']],
+    [/caesar/, ['salty', 'umami', 'sour'], ['crunchy']],
+    [/salad|slaw/, ['sour'], ['crunchy']],
+    [/mac (&|and|n) cheese|mac ?n ?cheese/, ['salty', 'umami'], ['creamy']],
+    [/soup|stew/, ['salty'], ['tender']],
+    [/kale/, ['bitter'], []],
+    [/cioppino|stew|minestrone/, ['salty', 'umami', 'sour'], ['tender']],
+    [/wings?\b/, ['salty', 'umami'], ['crispy']],
+    [/fried|tempura|fritter|onion ring|fries|chips|calamari|karaage|crispy|croquette|pakora/, ['salty'], ['crispy']],
+    [/spicy|habanero|jalape|buffalo|hot sauce|chili|chile|sriracha|diavolo|vindaloo|cajun|blackened|nashville|wasabi/, [], ['spicy-hot']],
+    [/sushi|maki|nigiri|(spicy tuna|california|salmon|tuna|eel|dragon|rainbow|crunchy|shrimp tempura|philly) roll/, ['salty', 'umami'], ['silky']],
+    [/noodle|pasta|spaghetti|tagliatelle|gnocchi|ravioli|tortell|udon|dumpling|bao|mochi/, [], ['chewy']],
+    [/custard|panna cotta|pudding|mousse|flan|creme brulee|crème/, ['sweet'], ['silky']],
+    [/ribs|brisket|pulled pork|bbq|barbecue/, ['sweet', 'salty', 'umami'], ['tender']],
+    [/juice|peach|watermelon|berry|berries|fruit|smoothie/, ['sweet'], ['juicy']]
+  ];
+  const CUISINE_RULES = [
+    [/seafood|clam|raw bar|oyster|fish/, ['salty', 'umami'], ['tender']], [/coffee|cafe|café/, ['bitter'], []], [/ice.?cream|dessert|bakery|donut|candy/, ['sweet'], []],
+    [/pizza/, ['salty', 'umami', 'sour'], ['chewy']], [/mexican|taco/, ['salty', 'sour'], ['crunchy']], [/sushi|japanese|ramen/, ['salty', 'umami'], ['silky']],
+    [/thai|vietnam/, ['sweet', 'sour', 'salty'], []], [/indian/, ['salty', 'umami'], ['spicy-hot']], [/italian/, ['salty', 'umami'], ['chewy']],
+    [/burger|american|diner|pub|grill/, ['salty', 'umami'], ['juicy']], [/greek|mediterranean/, ['salty', 'sour'], []], [/chinese|asian/, ['sweet', 'salty', 'umami'], []]
+  ];
+  function suggestFor(dishName, cuisine) {
+    const s = String(dishName || '').toLowerCase();
+    const fl = new Set(), tx = new Set();
+    if (s.trim()) RULES.forEach(([re, f, t]) => { if (re.test(s)) { f.forEach(x => fl.add(x)); t.forEach(x => tx.add(x)); } });
+    if (!fl.size && cuisine) CUISINE_RULES.forEach(([re, f, t]) => { if (re.test(String(cuisine).toLowerCase())) { f.forEach(x => fl.add(x)); t.forEach(x => tx.add(x)); } });
+    return { flavors: FIDS.filter(f => fl.has(f)), textures: TEXTURES.map(t => t.id).filter(t => tx.has(t)).slice(0, 3) };
+  }
+  const COMMON_DISHES = ['New England Clam Chowder', 'Lobster Roll', 'Fried Clams', 'Clam Strips', 'Stuffed Quahog', 'Raw Oysters', 'Littleneck Clams', 'Portuguese Kale Soup',
+    'Linguiça Sandwich', 'Fish & Chips', 'Fried Scallops', 'Baked Scallops', 'Lobster Bisque', 'Fish Tacos', 'Shrimp Cocktail', 'Steamed Lobster', 'Clam Cakes',
+    'Cranberry Walnut Salad', 'Caesar Salad', 'Cheeseburger', 'Pizza', 'Wings', 'Mac & Cheese', 'Ramen', 'Sushi Roll', 'Pad Thai', 'Curry', 'Burrito', 'Nachos',
+    'Ice Cream', 'Blueberry Pie', 'Malasadas', 'Croissant', 'Donut', 'Coffee', 'Espresso', 'IPA', 'Cranberry Juice', 'Lemonade'];
+
+  // Flavor/texture dropdown group (dropdowns only, per design)
+  function selectsHTML(prefix, options, selected, n, placeholder) {
+    return `<div class="selgrid">${Array.from({ length: n }, (_, i) => `<select class="sel" id="${prefix}${i}"><option value="">${placeholder} ${i + 1}…</option>
+      ${options.map(o => `<option value="${o.id}" ${selected[i] === o.id ? 'selected' : ''}>${o.icon} ${o.name}</option>`).join('')}</select>`).join('')}</div>`;
+  }
+  const readSelects = (root, prefix, n) => [...new Set(Array.from({ length: n }, (_, i) => ($('#' + prefix + i, root) || {}).value).filter(Boolean))];
+
+  // ---------- Suggest & confirm a dish (and share it) ----------
+  function contribLine(c) {
+    return JSON.stringify({ fq: 1, restaurant: c.restaurant, dish: c.dish, submittedAt: new Date(c.ts).toISOString(), player: state.profile ? state.profile.name : '' });
+  }
+  function mailtoFor(c) {
+    const to = CONFIG.SUBMIT_EMAILS.join(',');
+    const subj = `Flavor Quest dish: ${c.dish.name} @ ${c.restaurant.name}`;
+    const body = `Hi Flavor Quest team,\n\nI confirmed this dish in the app:\n\n${c.dish.name} at ${c.restaurant.name} (${c.restaurant.village || c.restaurant.town || ''})\nFlavors: ${c.dish.flavors.map(f => F[f].name).join(' + ')}\nTextures: ${c.dish.textures.map(t => T[t].name).join(', ') || 'none'}\n\nPaste this line into the admin page (admin.html):\n${contribLine(c)}\n\nThanks!`;
+    return `mailto:${to}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  }
+  // opts: { restaurant: {id,name,...} or restaurantId, dish: {name, flavors, textures} }
+  function openContribute(opts) {
+    let r = opts.restaurant || rById(opts.restaurantId);
+    if (!r) return toast('❓', 'Unknown restaurant');
+    const existing = rById(r.id);
+    const isNewSpot = !existing;
+    const knownNames = existing ? (existing.dishes || []).map(d => d.name) : [];
+    const pre = opts.dish || {};
+    let sug = pre.flavors && pre.flavors.length ? { flavors: pre.flavors, textures: pre.textures || [] } : suggestFor(pre.name || '', r.cuisine);
+    const dishOptions = [...new Set(knownNames.concat(COMMON_DISHES))];
+    const presetIdx = pre.name ? dishOptions.findIndex(n => normName(n) === normName(pre.name)) : -1;
+    openSheet(`<small class="muted" style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">${isNewSpot ? '🆕 New spot · help us tag it' : 'Confirm a dish'}</small>
+      <h2>${esc(r.name)}</h2>
+      <p class="muted" style="margin:0 0 10px">${esc(r.address || r.village || r.town || '')}${r.cuisine ? ' · ' + esc(r.cuisine) : ''}</p>
+      <div class="card flat">
+        <label class="field"><span>Dish</span><select id="ctDishSel"><option value="">Choose a dish…</option>
+          ${knownNames.length ? `<optgroup label="On our list for ${esc(r.name)}">${knownNames.map((n, i) => `<option value="${i}" ${presetIdx === i ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>` : ''}
+          <optgroup label="Cape Cod classics">${dishOptions.slice(knownNames.length).map((n, j) => `<option value="${j + knownNames.length}" ${presetIdx === j + knownNames.length ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>
+          <option value="other" ${presetIdx < 0 && pre.name ? 'selected' : ''}>Other (type the name)…</option></select></label>
+        <label class="field" id="ctOtherWrap" ${presetIdx < 0 && pre.name ? '' : 'hidden'}><span>Dish name</span><input type="text" id="ctDishName" maxlength="80" value="${esc(presetIdx < 0 ? pre.name || '' : '')}" placeholder="e.g. Cranberry scone"></label>
+        <div id="ctSug" class="preview-note">✨ We suggested flavors from the dish name${r.cuisine ? ' and cuisine' : ''}. Confirm or change them below.</div>
+        <span class="field" style="margin-bottom:6px"><span>Flavors (pick 1–5)</span></span>
+        <div id="ctFlav">${selectsHTML('ctF', FLAVORS, sug.flavors, 5, 'Flavor')}</div>
+        <span class="field" style="margin:10px 0 6px"><span>Textures (optional)</span></span>
+        <div id="ctTex">${selectsHTML('ctT', TEXTURES, sug.textures, 3, 'Texture')}</div>
+      </div>
+      <button class="btn coral block" id="ctSave">✅ Confirm & save to my app</button>
+      <p class="hint" style="text-align:center">Saved dishes show up in your app right away. Then send them to us so we can add them for everyone.</p>`, root => {
+      const nameNow = () => { const v = $('#ctDishSel', root).value; if (v === 'other' || v === '') return $('#ctDishName', root).value.trim(); return dishOptions[+v]; };
+      const resuggest = () => {
+        const nm = nameNow();
+        const known = existing && (existing.dishes || []).find(d => normName(d.name) === normName(nm));
+        const s2 = known ? { flavors: known.flavors, textures: known.textures } : suggestFor(nm, r.cuisine);
+        $('#ctFlav', root).innerHTML = selectsHTML('ctF', FLAVORS, s2.flavors, 5, 'Flavor');
+        $('#ctTex', root).innerHTML = selectsHTML('ctT', TEXTURES, s2.textures, 3, 'Texture');
+        $('#ctSug', root).innerHTML = known ? `📋 Current tags for <b>${esc(known.name)}</b>${known.suggested ? ' (unverified)' : ''}. Confirm or change them.` : s2.flavors.length ? '✨ Suggested from the dish name. Confirm or change.' : '🤔 No suggestion for that name — pick the flavors you tasted.';
+      };
+      $('#ctDishSel', root).onchange = e => { $('#ctOtherWrap', root).hidden = e.target.value !== 'other'; if (e.target.value !== 'other') resuggest(); else $('#ctDishName', root).focus(); };
+      $('#ctDishName', root).onchange = resuggest;
+      $('#ctSave', root).onclick = () => {
+        const name = nameNow();
+        const flavors = FIDS.filter(f => readSelects(root, 'ctF', 5).includes(f));
+        const textures = readSelects(root, 'ctT', 3);
+        if (!name) return toast('🍽️', 'Choose or type the dish');
+        if (!flavors.length) return toast('👅', 'Pick at least one flavor');
+        const rest = { id: r.id, name: r.name, town: r.town || 'Falmouth', village: r.village || '', address: r.address || '', lat: r.lat || null, lng: r.lng || null, cuisine: r.cuisine || '' };
+        if (r.osm) rest.osm = r.osm;
+        const c = { id: uid(), ts: Date.now(), restaurant: rest, dish: { name: name.slice(0, 80), flavors, textures }, isNewSpot };
+        state.contrib = state.contrib || [];
+        state.contrib.push(c);
+        if (!save()) { state.contrib.pop(); return; }
+        rebuildRestaurants();
+        showContribDone(c);
+      };
+    });
+  }
+  function showContribDone(c) {
+    const line = contribLine(c);
+    openSheet(`<div class="celebrate"><span class="bigicon">🙌</span><h2>Saved to your app!</h2>
+      <p class="muted">${esc(c.dish.name)} at ${esc(c.restaurant.name)}</p></div>
+      <div class="mini-flavors" style="justify-content:center;margin-bottom:12px">${flavorTags(c.dish.flavors)}${texTags(c.dish.textures)}</div>
+      <a class="btn coral block" id="ctMail" href="${esc(mailtoFor(c))}">📧 Send to Flavor Quest</a>
+      <p class="hint" style="text-align:center">Opens your email app with a ready-to-send message to the Flavor Quest team.</p>
+      <details style="margin-top:10px"><summary class="hint">Show the data line</summary><textarea readonly class="codebox" id="ctLine">${esc(line)}</textarea>
+      <button class="btn ghost small" id="ctCopy" style="margin-top:6px">Copy</button></details>
+      <div class="row" style="margin-top:14px"><button class="btn block ghost" data-rest="${esc(c.restaurant.id)}" style="flex:1">View restaurant</button>
+      <button class="btn block" id="ctLogIt" style="flex:1">Log it now</button></div>`, root => {
+      bindCommon(root);
+      $('#ctCopy', root).onclick = () => { const t = $('#ctLine', root); t.select(); try { navigator.clipboard.writeText(t.value); } catch (e) { document.execCommand('copy'); } toast('📋', 'Copied'); };
+      $('#ctLogIt', root).onclick = () => {
+        closeSheet();
+        draft = newDraft({ restaurantId: c.restaurant.id, town: c.restaurant.town || 'Falmouth', dish: c.dish.name, flavors: c.dish.flavors.slice(), textures: c.dish.textures.slice() });
+        go('log');
+      };
+    });
+  }
+
+  // ---------- Nearby ----------
+  function askLocation() {
+    openSheet(`<div class="celebrate"><span class="bigicon">📍</span><h2>Share your location?</h2></div>
+      <p>Flavor Quest uses your location <b>once, only when you tap</b>, to sort restaurants by distance and find new spots near you.</p>
+      <div class="card flat" style="font-size:14px">
+        <div class="req ok"><span class="ck">📱</span><span>Your browser will ask for permission. You can say no and pick an area instead.</span></div>
+        <div class="req ok"><span class="ck">🔒</span><span>Your location isn't saved or sent to us. To find new spots, the app sends your approximate position to OpenStreetMap's free map service.</span></div>
+      </div>
+      <button class="btn coral block" id="geoYes">Share my location</button>
+      <button class="btn ghost block" id="geoNo" style="margin-top:10px">Not now</button>`, root => {
+      $('#geoNo', root).onclick = closeSheet;
+      $('#geoYes', root).onclick = () => {
+        if (!navigator.geolocation) { closeSheet(); return toast('⚠️', 'Location isn\'t available in this browser. Pick an area instead.'); }
+        $('#geoYes', root).textContent = 'Locating…';
+        navigator.geolocation.getCurrentPosition(pos => {
+          here = { lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'Your location', source: 'gps' };
+          closeSheet(); go('nearby'); render(); loadOsmSpots();
+        }, err => {
+          closeSheet();
+          toast('📍', err.code === 1 ? 'Location permission was declined. Pick an area instead.' : 'Couldn\'t get your location. Pick an area instead.');
+        }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 0 });
+      };
+    });
+  }
+  const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  async function loadOsmSpots(force) {
+    if (!here) return;
+    const key = here.lat.toFixed(3) + ',' + here.lng.toFixed(3);
+    if (!force && osmSpots.key === key && (osmSpots.status === 'ok' || osmSpots.status === 'loading')) return;
+    const cached = sessionStorage.getItem('fq.osm.' + key);
+    if (cached && !force) { osmSpots = { key, status: 'ok', list: JSON.parse(cached), error: '' }; if (currentTab() === 'nearby') render(); return; }
+    osmSpots = { key, status: 'loading', list: [], error: '' };
+    if (currentTab() === 'nearby') render();
+    const q = `[out:json][timeout:12];nwr["amenity"~"^(restaurant|cafe|fast_food|ice_cream)$"]["name"](around:${CONFIG.NEARBY_RADIUS_M},${here.lat},${here.lng});out center tags 150;`;
+    let data = null, lastErr = '';
+    for (const ep of OVERPASS) {
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(), 15000);
+      try {
+        const res = await fetch(ep, { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, signal: ctl.signal });
+        clearTimeout(timer);
+        if (!res.ok) { lastErr = 'HTTP ' + res.status; continue; }
+        data = await res.json(); break;
+      } catch (e) { clearTimeout(timer); lastErr = e.name === 'AbortError' ? 'timed out' : 'network error'; }
+    }
+    if (osmSpots.key !== key) return; // location changed meanwhile
+    if (!data) { osmSpots = { key, status: 'error', list: [], error: lastErr }; if (currentTab() === 'nearby') render(); return; }
+    const known = allRestaurants();
+    const list = (data.elements || []).map(e => {
+      const t = e.tags || {};
+      const lat = e.lat != null ? e.lat : e.center && e.center.lat, lng = e.lon != null ? e.lon : e.center && e.center.lon;
+      if (lat == null || !t.name) return null;
+      const addr = [t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' ');
+      const city = t['addr:city'] || '';
+      return { id: `osm-${e.type}-${e.id}`, osm: `${e.type}/${e.id}`, name: t.name, lat, lng, amenity: t.amenity,
+        cuisine: (t.cuisine || t.amenity || '').replace(/_/g, ' ').replace(/;/g, ', '), address: addr ? `${addr}${city ? ', ' + city : ''}` : '',
+        town: nearestTown(lat, lng), village: city || nearestVillage(lat, lng, known), website: t.website || t['contact:website'] || '' };
+    }).filter(Boolean).filter(s => !known.some(k => (normName(k.name) && (normName(k.name) === normName(s.name) || (normName(s.name).length > 4 && normName(k.name).includes(normName(s.name))) || (normName(k.name).length > 4 && normName(s.name).includes(normName(k.name))))) || (k.lat && distKm(k, s) < 0.02 && normName(k.name).slice(0, 4) === normName(s.name).slice(0, 4))));
+    const seen = new Set();
+    const dedup = list.filter(s => { const k = normName(s.name) + s.lat.toFixed(3); if (seen.has(k)) return false; seen.add(k); return true; });
+    dedup.sort((a, b) => distKm(here, a) - distKm(here, b));
+    try { sessionStorage.setItem('fq.osm.' + key, JSON.stringify(dedup)); } catch (e) {}
+    osmSpots = { key, status: 'ok', list: dedup, error: '' };
+    if (currentTab() === 'nearby') render();
+  }
+  function renderNearby(v) {
+    const all = allRestaurants().filter(r => r.lat);
+    const sel = nearbyFilter;
+    const combo = keyOf(sel);
+    let body = '';
+    if (!here) {
+      body = `<div class="empty"><span class="big">📍</span>Share your location or pick an area to see flavors nearby.</div>`;
+    } else {
+      const sorted = all.map(r => ({ r, d: distKm(here, r) })).sort((a, b) => a.d - b.d);
+      if (combo) {
+        const matches = sorted.map(x => ({ ...x, dishes: (x.r.dishes || []).filter(dsh => nearbyMatch === 'exact' ? keyOf(dsh.flavors || []) === combo : sel.every(f => (dsh.flavors || []).includes(f))) })).filter(x => x.dishes.length);
+        const n = NODE[combo];
+        body = `<div class="section-title"><h2>${esc(nodeName(n))}</h2><small>${matches.length} place${matches.length === 1 ? '' : 's'}</small></div>
+          ${n ? `<p class="hint" style="margin-top:-6px">Your node: <a href="javascript:void 0" data-node="${combo}">${{ locked: '🔒 locked', unlocked: '🔓 open', progress: '🍴 in progress', complete: '⭐ complete' }[nodeState(combo)]}</a></p>` : ''}
+          ${matches.length ? matches.map(x => `<div class="card nearcard"><div class="spread"><a href="javascript:void 0" data-rest="${esc(x.r.id)}"><b>${esc(x.r.name)}</b></a><span class="pill">${fmtDist(x.d)}</span></div>
+            <small class="muted">${esc(x.r.village || x.r.town || '')}${x.r.cuisine ? ' · ' + esc(x.r.cuisine) : ''}</small>
+            ${x.dishes.map(dsh => `<div class="dishrow"><div class="dr-main"><b>${esc(dsh.name)}</b><span class="mini-flavors">${flavorTags(dsh.flavors)}</span>${dsh.suggested ? '<small>💡 likely</small>' : ''}</div>
+            <div class="dr-act"><button class="btn small coral" data-logdish="${esc(x.r.id)}|${x.r.dishes.indexOf(dsh)}">Log</button></div></div>`).join('')}</div>`).join('')
+          : `<p class="muted">No known dishes with ${nearbyMatch === 'exact' ? 'exactly' : 'at least'} that combo nearby yet.${nearbyMatch === 'exact' ? ' Try "contains these flavors".' : ''}</p>`}`;
+      } else {
+        const close = sorted.filter(x => x.d < 25).slice(0, 30);
+        body = `<div class="section-title"><h2>Closest restaurants</h2><small>${close.length}</small></div>
+          <div class="rlist">${close.map(x => rCardHTML(x.r, `<b style="color:var(--sea)">${fmtDist(x.d)}</b> · `)).join('') || '<p class="muted">No known restaurants within 15 miles yet.</p>'}</div>`;
+      }
+      const os = osmSpots;
+      body += `<div class="section-title"><h2>🆕 New spots nearby</h2><small>from OpenStreetMap</small></div>
+        <p class="hint" style="margin-top:-6px">Places within ~${(CONFIG.NEARBY_RADIUS_M / 1609).toFixed(1)} mi that aren't on Flavor Quest yet. Tag a dish to add them!</p>
+        ${os.status === 'loading' ? '<div class="card flat"><span class="spinner"></span> Looking for spots near you…</div>'
+          : os.status === 'error' ? `<div class="preview-note warn">Couldn't reach the map service (${esc(os.error)}). <button class="btn small ghost" id="osmRetry">Try again</button></div>`
+          : os.status === 'ok' ? (os.list.length ? `<div class="rlist">${os.list.slice(0, 40).map(s => `<div class="rcard newspot"><span class="ricon">🆕</span><span class="rmeta"><b>${esc(s.name)}</b><small>${fmtDist(distKm(here, s))} · ${esc(s.cuisine || 'restaurant')}${s.address ? ' · ' + esc(s.address) : ''}</small></span>
+              <button class="btn small coral" data-tagspot="${esc(s.id)}">Help us tag it</button></div>`).join('')}</div>` : '<p class="muted">Every spot nearby is already on Flavor Quest. 🎉</p>')
+          : `<button class="btn ghost block" id="osmLoad">Look for new spots nearby</button>`}`;
+    }
+    v.innerHTML = `<h1>Flavors near me</h1>
+      <div class="card">
+        <div class="spread"><div><b>${here ? esc(here.label) : 'No location yet'}</b>${here ? `<br><small class="muted">${here.lat.toFixed(4)}, ${here.lng.toFixed(4)}</small>` : ''}</div>
+        <button class="btn small coral" id="nbGeo">📍 ${here && here.source === 'gps' ? 'Update' : 'Use my location'}</button></div>
+        <label class="field" style="margin:12px 0 0"><span>…or pick an area</span><select id="nbArea"><option value="">Choose an area…</option>${AREAS.map(a => `<option value="${a.id}" ${here && here.source === a.id ? 'selected' : ''}>${esc(a.label)}</option>`).join('')}</select></label>
+      </div>
+      <div class="card">
+        <h3>Filter by flavor combo</h3>
+        <p class="hint" style="margin-top:-4px">Pick 1–4 flavors to see which nearby places have dishes that match.</p>
+        ${selectsHTML('nbF', FLAVORS, sel, 4, 'Flavor')}
+        <div class="row" style="margin-top:8px"><select class="sel" id="nbMatch" style="flex:1"><option value="exact" ${nearbyMatch === 'exact' ? 'selected' : ''}>Exactly this combo (counts for that node)</option><option value="contains" ${nearbyMatch === 'contains' ? 'selected' : ''}>Contains these flavors</option></select>
+        ${sel.length ? '<button class="btn small ghost" id="nbClear">Clear</button>' : ''}</div>
+      </div>
+      ${body}`;
+    bindCommon(v);
+    $('#nbGeo').onclick = askLocation;
+    $('#nbArea').onchange = e => { const a = AREAS.find(x => x.id === e.target.value); if (!a) return; here = { lat: a.lat, lng: a.lng, label: a.label, source: a.id }; render(); loadOsmSpots(); };
+    const onF = () => { nearbyFilter = FIDS.filter(f => readSelects(v, 'nbF', 4).includes(f)); render(); };
+    for (let i = 0; i < 4; i++) $('#nbF' + i).onchange = onF;
+    $('#nbMatch').onchange = e => { nearbyMatch = e.target.value; render(); };
+    if ($('#nbClear')) $('#nbClear').onclick = () => { nearbyFilter = []; render(); };
+    if ($('#osmRetry')) $('#osmRetry').onclick = () => loadOsmSpots(true);
+    if ($('#osmLoad')) $('#osmLoad').onclick = () => loadOsmSpots();
+    $$('[data-tagspot]', v).forEach(b => b.onclick = () => { const s = osmSpots.list.find(x => x.id === b.dataset.tagspot); if (s) openContribute({ restaurant: s }); });
+  }
+
   // ---------- Boot ----------
   async function loadRestaurants() {
     try {
@@ -862,8 +1302,9 @@
       const data = await res.json();
       restaurants = (data.restaurants || []).filter(r => r && r.id && r.name);
     } catch (e) {
-      restaurants = [{ id: 'cape-island-cafe', name: 'Cape Island Café', town: 'Falmouth', address: '316 Gifford St, Falmouth, MA', hours: 'Lunch Mon–Fri, 11 AM–3 PM', participating: true, featured: true }];
+      restaurants = [{ id: 'cape-island-cafe', name: 'Cape Island Café', town: 'Falmouth', village: 'Teaticket', address: '316 Gifford St, Falmouth, MA', lat: 41.56227, lng: -70.6111, hours: 'Lunch Mon–Fri, 11 AM–3 PM', participating: true, featured: true, dishes: [] }];
     }
+    rebuildRestaurants();
   }
   async function boot() {
     $('#sheetClose').onclick = closeSheet;
@@ -883,6 +1324,6 @@
     if (state.profile) handlePendingCheckin();
   }
   // Expose a tiny API for debugging/tests
-  window.FlavorQuest = { CONFIG, NODES, get state() { return state; }, derive };
+  window.FlavorQuest = { CONFIG, NODES, get state() { return state; }, derive, suggestFor, restaurants: () => mergedRestaurants };
   boot();
 })();
