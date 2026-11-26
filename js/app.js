@@ -17,11 +17,12 @@
   };
 
   const FLAVORS = [
-    { id: 'sweet',  name: 'Sweet',  color: '#ff7aa8', icon: '🍯', desc: 'Maple, honey, ripe berries' },
-    { id: 'sour',   name: 'Sour',   color: '#f2c800', icon: '🍋', desc: 'Citrus, vinegar, cranberry' },
-    { id: 'salty',  name: 'Salty',  color: '#3fb0dc', icon: '🧂', desc: 'Sea salt, oysters, chips' },
-    { id: 'bitter', name: 'Bitter', color: '#6aae2c', icon: '☕', desc: 'Coffee, greens, dark chocolate' },
-    { id: 'umami',  name: 'Umami',  color: '#a9653b', icon: '🍄', desc: 'Broth, mushrooms, parmesan' }
+    // Round 3: harmonized with the Syren Harbour palette (dusty rose, brass, harbor blue, palm, bronze)
+    { id: 'sweet',  name: 'Sweet',  color: '#b8506f', ink: '#fff',    icon: '🍯', desc: 'Maple, honey, ripe berries' },
+    { id: 'sour',   name: 'Sour',   color: '#d6a933', ink: '#141825', icon: '🍋', desc: 'Citrus, vinegar, cranberry' },
+    { id: 'salty',  name: 'Salty',  color: '#3f7aa6', ink: '#fff',    icon: '🧂', desc: 'Sea salt, oysters, chips' },
+    { id: 'bitter', name: 'Bitter', color: '#4f7d4f', ink: '#fff',    icon: '☕', desc: 'Coffee, greens, dark chocolate' },
+    { id: 'umami',  name: 'Umami',  color: '#9a5a3a', ink: '#fff',    icon: '🍄', desc: 'Broth, mushrooms, parmesan' }
   ];
   const F = Object.fromEntries(FLAVORS.map(f => [f.id, f]));
   const FIDS = FLAVORS.map(f => f.id);
@@ -36,15 +37,24 @@
   const T = Object.fromEntries(TEXTURES.map(t => [t.id, t]));
 
   const AVATARS = [
-    { id: 'lobster', icon: '🦞', name: 'Captain Claw', bg: 'linear-gradient(135deg,#ffb3a7,#ff6b5b)' },
-    { id: 'chef', icon: '🧑‍🍳', name: 'Chef Sandy', bg: 'linear-gradient(135deg,#fff1c9,#ffd36b)' },
-    { id: 'octopus', icon: '🐙', name: 'Octo Taster', bg: 'linear-gradient(135deg,#e0c8ff,#b48cff)' },
-    { id: 'oyster', icon: '🦪', name: 'Oyster Ollie', bg: 'linear-gradient(135deg,#d9f1f8,#7fcfe8)' },
-    { id: 'whale', icon: '🐳', name: 'Big Appetite', bg: 'linear-gradient(135deg,#bfe3ff,#5aa9e6)' },
-    { id: 'gull', icon: '🐦', name: 'Snack Gull', bg: 'linear-gradient(135deg,#f2f2f2,#c9d6dc)' },
-    { id: 'donut', icon: '🍩', name: 'Sugar Scout', bg: 'linear-gradient(135deg,#ffd6e7,#ff8fb8)' },
-    { id: 'taco', icon: '🌮', name: 'Taco Trekker', bg: 'linear-gradient(135deg,#fff0c2,#9ed36a)' }
+    { id: 'lobster', icon: '🦞', name: 'Captain Claw', bg: 'linear-gradient(135deg,#e2b9a0,#9a5b42)' },
+    { id: 'chef', icon: '🧑‍🍳', name: 'Chef Sandy', bg: 'linear-gradient(135deg,#f4efe6,#d8b46a)' },
+    { id: 'octopus', icon: '🐙', name: 'Octo Taster', bg: 'linear-gradient(135deg,#dcd6e6,#8f88a8)' },
+    { id: 'oyster', icon: '🦪', name: 'Oyster Ollie', bg: 'linear-gradient(135deg,#dde4ea,#909ead)' },
+    { id: 'whale', icon: '🐳', name: 'Big Appetite', bg: 'linear-gradient(135deg,#c0cdd4,#5f7891)' },
+    { id: 'gull', icon: '🐦', name: 'Snack Gull', bg: 'linear-gradient(135deg,#f4f4f9,#c0cdd4)' },
+    { id: 'donut', icon: '🍩', name: 'Sugar Scout', bg: 'linear-gradient(135deg,#ecd3da,#b8506f)' },
+    { id: 'taco', icon: '🌮', name: 'Taco Trekker', bg: 'linear-gradient(135deg,#efe3c4,#6f8f6a)' }
   ];
+  // The five Flavor Cast heroines from the Syren Harbour story
+  const HEROINES = [
+    { id: 'h-sweet', flavor: 'sweet', name: 'Adaeze', full: 'Adaeze Okafor', role: 'Sweet, the charmer', dish: 'Haka style Jerk Chicken' },
+    { id: 'h-sour', flavor: 'sour', name: 'Raven', full: 'Raven Cruz', role: 'Sour, the one with attitude', dish: 'Mojo Criollo Shrimp' },
+    { id: 'h-salty', flavor: 'salty', name: 'Marisol', full: 'Marisol Duarte', role: 'Salty, straight off the ocean', dish: 'Shrimp Milanesa' },
+    { id: 'h-bitter', flavor: 'bitter', name: 'Valentina', full: 'Valentina Sokol', role: 'Bitter, the acquired taste', dish: 'Espresso Martini Nitro Mocktail' },
+    { id: 'h-umami', flavor: 'umami', name: 'Noor', full: 'Noor Al-Mansouri', role: 'Umami, the smooth operator', dish: 'Porchetta Pernil' }
+  ].map(h => Object.assign(h, { img: `assets/avatars/${h.flavor}-256.webp`, img512: `assets/avatars/${h.flavor}-512.webp` }));
+  HEROINES.forEach(h => AVATARS.push(Object.assign({ heroine: true, icon: '', bg: '#c0cdd4' }, h)));
   const AV = Object.fromEntries(AVATARS.map(a => [a.id, a]));
 
   const TOWNS = [
@@ -131,7 +141,7 @@
   let state = load();
   let restaurants = [];
   let derived = null;
-  let onb = { step: 0, avatar: 'lobster', name: '', flavor: null };
+  let onb = { step: 0, avatar: 'lobster', name: '', flavor: null, photo: null };
   let draft = newDraft();
 
   function blankState() {
@@ -229,8 +239,23 @@
   const fmtDate = ts => new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   const allRestaurants = () => mergedRestaurants;
   const rById = id => allRestaurants().find(r => r.id === id);
-  const avatarHTML = (id, cls) => { const a = AV[id] || AVATARS[0]; return `<span class="avatar ${cls || ''}" style="background:${a.bg}">${a.icon}</span>`; };
-  const flavorTags = ids => FIDS.filter(id => (ids || []).includes(id)).map(id => `<span style="background:${F[id].color}">${F[id].name}</span>`).join('');
+  // Avatars: emoji, Flavor Cast heroine image, or the player's own photo (original or Syren-style badge)
+  function avatarHTML(id, cls, photo) {
+    if (id === 'photo') {
+      const ph = photo || (state.profile && state.profile.photo);
+      if (ph && (ph.badge || ph.orig)) {
+        const art = ph.use !== 'orig' && ph.badge;
+        return `<span class="avatar img ${art ? 'badge' : ''} ${cls || ''}"><img src="${art ? ph.badge : ph.orig}" alt="Your avatar"></span>`;
+      }
+      id = 'lobster';
+    }
+    const a = AV[id] || AVATARS[0];
+    if (a.img) return `<span class="avatar img ${cls || ''}" style="--ring:${F[a.flavor].color}"><img src="${a.img}" alt="${esc(a.full)}" loading="lazy"></span>`;
+    return `<span class="avatar ${cls || ''}" style="background:${a.bg}">${a.icon}</span>`;
+  }
+  const avIcon = id => id === 'photo' ? '📸' : AV[id] && AV[id].heroine ? '✨' : (AV[id] || AVATARS[0]).icon;
+  const fcss = id => `background:${F[id].color};color:${F[id].ink}`;
+  const flavorTags = ids => FIDS.filter(id => (ids || []).includes(id)).map(id => `<span style="${fcss(id)}">${F[id].name}</span>`).join('');
   const texTags = ids => (ids || []).filter(t => T[t]).map(t => `<span class="tx">${T[t].icon} ${T[t].name}</span>`).join('');
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
@@ -243,7 +268,7 @@
   }
   function confetti(n) {
     const box = $('#confetti');
-    const colors = FLAVORS.map(f => f.color).concat(['#ff6b5b', '#f5b72d', '#1b86a8', '#ffffff']);
+    const colors = FLAVORS.map(f => f.color).concat(['#c4927b', '#d8b46a', '#909ead', '#efeff3', '#141825']);
     for (let i = 0; i < (n || 140); i++) {
       const p = document.createElement('i');
       const dur = 2.2 + Math.random() * 2.2;
@@ -299,7 +324,7 @@
     $('#topbar').hidden = !on; $('#bottomnav').hidden = !on;
     if (!on) return;
     const L = derived.level;
-    $('#meAvatar').outerHTML = avatarHTML(state.profile.avatar, 'sm').replace('class="avatar sm"', 'class="avatar sm" id="meAvatar"');
+    $('#meAvatar').outerHTML = avatarHTML(state.profile.avatar, 'sm').replace('<span ', '<span id="meAvatar" ');
     $('#meName').textContent = state.profile.name;
     $('#meLevel').textContent = `Lv ${L.n} · ${L.title}`;
     $('#xpFill').style.width = L.pct + '%';
@@ -329,6 +354,43 @@
     window.scrollTo(0, sameTab && tab === 'nearby' ? y : 0);
   }
 
+  // ---------- Avatar picker (photo + Flavor Cast + classic mascots) ----------
+  function avatarPickerHTML(sel, photo, size) {
+    const opt = a => `<button class="avatar-opt ${sel === a.id ? 'sel' : ''}" data-av="${a.id}">${avatarHTML(a.id, size)}<span>${esc(a.name)}</span></button>`;
+    const mine = photo && (photo.orig || photo.badge);
+    return `<div class="photo-av card flat">
+        <div class="ribbon-title"><span>Your photo</span></div>
+        ${mine ? `<div class="row" style="justify-content:center;gap:14px">
+            <button class="avatar-opt ${sel === 'photo' ? 'sel' : ''}" data-av="photo">${avatarHTML('photo', 'lg', photo)}<span>${photo.use === 'orig' || !photo.badge ? 'My photo' : 'My Syren avatar'}</span></button>
+            ${photo.badge ? `<div class="col" style="display:flex;flex-direction:column;gap:6px"><button class="btn small ${photo.use !== 'orig' ? '' : 'ghost'}" data-photouse="art">✨ Stylized</button><button class="btn small ${photo.use === 'orig' ? '' : 'ghost'}" data-photouse="orig">📷 Original</button></div>` : ''}
+          </div>` : '<p class="hint" style="text-align:center;margin:0 0 10px">Snap a selfie and we\'ll turn it into an illustrated Syren Harbour badge with your name.</p>'}
+        <div class="photo-btns">
+          <label class="btn coral small">📸 ${mine ? 'Retake' : 'Take a photo'}<input type="file" accept="image/*" capture="user" id="avCamera" class="file-hidden"></label>
+          <label class="btn ghost small">🖼️ Upload<input type="file" accept="image/*" id="avUpload" class="file-hidden"></label>
+        </div>
+        <p class="privacy">🔒 Your photo stays on your phone. Nothing is uploaded.</p>
+      </div>
+      <div class="ribbon-title"><span>The Flavor Cast</span></div>
+      <div class="avatar-grid cast">${AVATARS.filter(a => a.heroine).map(opt).join('')}</div>
+      <div class="ribbon-title"><span>Classic mascots</span></div>
+      <div class="avatar-grid">${AVATARS.filter(a => !a.heroine).map(opt).join('')}</div>`;
+  }
+  // ctx: { get(), set(id), photo(), setPhoto(p), name(), rerender() }
+  function bindAvatarPicker(root, ctx) {
+    $$('[data-av]', root).forEach(b => b.onclick = () => { ctx.set(b.dataset.av); $$('[data-av]', root).forEach(x => x.classList.toggle('sel', x === b)); if (ctx.onPick) ctx.onPick(); });
+    $$('[data-photouse]', root).forEach(b => b.onclick = () => { const p = ctx.photo(); if (!p) return; p.use = b.dataset.photouse; ctx.setPhoto(p); ctx.set('photo'); ctx.rerender(); });
+    const pick = async e => {
+      const f = e.target.files && e.target.files[0]; e.target.value = '';
+      if (!f || !window.FQStudio) return;
+      const res = await window.FQStudio.open({ file: f, name: ctx.name });
+      if (!res) return;
+      if (res.redo) { const again = $('#avUpload', root); if (again) again.click(); return; }
+      ctx.setPhoto(res); ctx.set('photo'); ctx.rerender();
+      toast('📸', res.use === 'art' ? 'Your Syren avatar is ready' : 'Photo avatar ready');
+    };
+    $$('#avCamera, #avUpload', root).forEach(inp => inp.onchange = pick);
+  }
+
   // ---------- Onboarding ----------
   function renderOnboarding(v) {
     const steps = `<div class="steps">${[0, 1, 2, 3].map(i => `<i class="${i <= onb.step ? 'on' : ''}"></i>`).join('')}</div>`;
@@ -347,10 +409,11 @@
         <p class="footer-note">No account needed — your progress saves on this device.</p></div>`;
     } else if (onb.step === 1) {
       v.innerHTML = `<div class="onb">${steps}<h2 class="center" style="text-align:center">Pick your avatar</h2>
-        <div class="avatar-grid">${AVATARS.map(a => `<button class="avatar-opt ${onb.avatar === a.id ? 'sel' : ''}" data-av="${a.id}">${avatarHTML(a.id)}<span>${a.name}</span></button>`).join('')}</div>
+        ${avatarPickerHTML(onb.avatar, onb.photo)}
         <button class="btn block" id="onbNext">Next →</button>
         <button class="btn ghost block" id="onbBack" style="margin-top:10px">Back</button></div>`;
-      $$('[data-av]', v).forEach(b => b.onclick = () => { onb.avatar = b.dataset.av; renderOnboarding(v); });
+      bindAvatarPicker(v, { get: () => onb.avatar, set: id => { onb.avatar = id; }, photo: () => onb.photo, setPhoto: p => { onb.photo = p; },
+        name: () => onb.name || 'Flavor Explorer', rerender: () => renderOnboarding(v) });
     } else if (onb.step === 2) {
       v.innerHTML = `<div class="onb">${steps}<div class="center" style="text-align:center">${avatarHTML(onb.avatar, 'lg')}<h2 style="margin-top:12px">What should we call you?</h2></div>
         <label class="field"><span>Explorer name</span><input type="text" id="onbName" maxlength="24" placeholder="e.g. Sandy Shores" value="${esc(onb.name)}" autocomplete="nickname"></label>
@@ -362,7 +425,7 @@
     } else {
       v.innerHTML = `<div class="onb">${steps}<h2 style="text-align:center">Choose your first flavor</h2>
         <p class="muted" style="text-align:center">You can start on any core flavor — and work on the others whenever you like.</p>
-        <div class="flavor-big">${FLAVORS.map(f => `<button data-fl="${f.id}" class="${onb.flavor === f.id ? 'sel' : ''}" style="background:${f.color}">${f.icon} ${f.name}<small>${f.desc}</small></button>`).join('')}</div>
+        <div class="flavor-big">${FLAVORS.map(f => `<button data-fl="${f.id}" class="${onb.flavor === f.id ? 'sel' : ''}" style="${fcss(f.id)}">${f.icon} ${f.name}<small>${f.desc}</small></button>`).join('')}</div>
         <button class="btn coral block" id="onbNext" ${onb.flavor ? '' : 'disabled'}>Begin the quest 🚀</button>
         <button class="btn ghost block" id="onbBack" style="margin-top:10px">Back</button></div>`;
       $$('[data-fl]', v).forEach(b => b.onclick = () => { onb.flavor = b.dataset.fl; renderOnboarding(v); });
@@ -373,9 +436,11 @@
       if (onb.step === 2 && !onb.name.trim()) { toast('✏️', 'Pick a name first'); return; }
       if (onb.step < 3) { onb.step++; renderOnboarding(v); return; }
       state.profile = { name: onb.name.trim().slice(0, 24), avatar: onb.avatar, startFlavor: onb.flavor, created: Date.now() };
+      if (onb.photo && onb.avatar === 'photo') state.profile.photo = onb.photo;
       save();
+      refreshBadgeName();
       setTab('home');
-      toast(AV[onb.avatar].icon, `Welcome aboard, ${esc(state.profile.name)}! Your quest starts with ${F[onb.flavor].name}.`);
+      toast(avIcon(onb.avatar), `Welcome aboard, ${esc(state.profile.name)}! Your quest starts with ${F[onb.flavor].name}.`);
       handlePendingCheckin();
     };
   }
@@ -393,15 +458,15 @@
         <circle cx="${t.x}" cy="${t.y}" r="16" fill="transparent"></circle></g>`;
     }).join('');
     return `<svg viewBox="0 0 360 250" role="img" aria-label="Map of Cape Cod towns">
-      <defs><linearGradient id="landG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf0d9"/><stop offset="1" stop-color="#efd9ae"/></linearGradient></defs>
+      <defs><linearGradient id="landG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e9dc"/><stop offset="1" stop-color="#dcc3a8"/></linearGradient></defs>
       <g fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.5" stroke-linecap="round">
         <path d="M120 70 q10 -6 20 0 t20 0"/><path d="M60 80 q10 -6 20 0 t20 0"/><path d="M180 230 q10 -6 20 0 t20 0"/><path d="M320 120 q8 -5 16 0 t16 0"/><path d="M110 240 q10 -6 20 0 t20 0"/></g>
-      <text x="150" y="92" font-size="11" font-style="italic" fill="#3c7f96" font-family="Georgia,serif" text-anchor="middle">Cape Cod Bay</text>
-      <text x="200" y="222" font-size="11" font-style="italic" fill="#3c7f96" font-family="Georgia,serif" text-anchor="middle">Nantucket Sound</text>
-      <text x="345" y="214" font-size="11" font-style="italic" fill="#3c7f96" font-family="Georgia,serif" text-anchor="end">Atlantic</text>
-      <path d="${land}" fill="#0b4a63" opacity=".12" transform="translate(2 4)"/>
-      <path d="${land}" fill="url(#landG)" stroke="#d9bf8a" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M14 128 L22 160" stroke="#9fd7ea" stroke-width="4"/>
+      <text x="150" y="92" font-size="11" font-style="italic" fill="#2c313b" font-family="Playfair Display,Georgia,serif" text-anchor="middle">Cape Cod Bay</text>
+      <text x="200" y="222" font-size="11" font-style="italic" fill="#2c313b" font-family="Playfair Display,Georgia,serif" text-anchor="middle">Nantucket Sound</text>
+      <text x="345" y="214" font-size="11" font-style="italic" fill="#2c313b" font-family="Playfair Display,Georgia,serif" text-anchor="end">Atlantic</text>
+      <path d="${land}" fill="#141825" opacity=".18" transform="translate(2 4)"/>
+      <path d="${land}" fill="url(#landG)" stroke="#141825" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M14 128 L22 160" stroke="#a9b8c6" stroke-width="4"/>
       ${towns}</svg>`;
   }
   function nextGoal() {
@@ -432,11 +497,12 @@
         <div class="row">${avatarHTML(state.profile.avatar)}<div><h2 style="margin:0">Ahoy, ${esc(state.profile.name)}!</h2><p style="margin:2px 0 0">Next stop on your flavor quest:</p></div></div>
         <div style="margin-top:14px;background:rgba(255,255,255,.14);border-radius:14px;padding:12px">
           <div class="spread"><b style="font-size:17px">${nodeName(goal)}</b><span class="pill" style="background:#fff;color:var(--sea)">${LEVEL_SINGULAR[goal.level]}</span></div>
-          <div class="meter" style="background:rgba(255,255,255,.25)"><i style="width:${Math.min(100, 100 * gCount / CONFIG.DISHES_PER_NODE)}%;background:linear-gradient(90deg,#ffd36b,#ff8f4f)"></i></div>
-          <small style="color:#dff3fa">${gCount}/${CONFIG.DISHES_PER_NODE} dishes · ${gRest}/${CONFIG.RESTAURANTS_PER_NODE} restaurants</small>
+          <div class="meter" style="background:rgba(255,255,255,.25)"><i style="width:${Math.min(100, 100 * gCount / CONFIG.DISHES_PER_NODE)}%;background:linear-gradient(90deg,#d8b46a,#c4927b)"></i></div>
+          <small style="color:#dde4ea">${gCount}/${CONFIG.DISHES_PER_NODE} dishes · ${gRest}/${CONFIG.RESTAURANTS_PER_NODE} restaurants</small>
         </div>
         <div class="row wrap" style="margin-top:12px"><button class="btn light small" data-logfor="${goal.key}">＋ Log a ${esc(nodeShort(goal))} dish</button><button class="btn small" style="background:rgba(255,255,255,.18);box-shadow:none" data-node="${goal.key}">Where to find it</button></div>
       </div>
+      ${storyCardHTML()}
       <button class="btn coral block" data-go="nearby" style="margin-bottom:14px">📍 Find flavors near me</button>
       <div class="stats">
         <div class="stat"><b>${state.dishes.length}</b><small>Dishes</small></div>
@@ -454,13 +520,23 @@
     bindCommon(v);
     $$('[data-town]', v).forEach(g => g.onclick = () => openTown(g.dataset.town));
   }
+  function storyCardHTML() {
+    const sh = allRestaurants().find(r => r.storyStart);
+    if (!sh) return '';
+    return `<div class="card story">
+      <div class="ribbon-title"><span>Chapter 1 · The Harbour</span></div>
+      <img class="lineup" src="assets/avatars/lineup-1200.webp" alt="The Flavor Cast: Adaeze, Raven, Marisol, Valentina and Noor" loading="lazy">
+      <p>Your quest starts at <b>${esc(sh.name)}</b>, ${esc(sh.address || '')}. Five strangers walk in, each one a flavor. Order what they order.</p>
+      <div class="cast-row">${HEROINES.map(h => `<button class="cast-chip" data-rest="${esc(sh.id)}" title="${esc(h.full)}: ${esc(h.dish)}">${avatarHTML(h.id, 'sm')}<span style="${fcss(h.flavor)}">${F[h.flavor].name}</span></button>`).join('')}</div>
+      <button class="btn block" data-rest="${esc(sh.id)}" style="margin-top:10px">⚓ Start at ${esc(sh.name)}</button></div>`;
+  }
   function rCardHTML(r, extra) {
     const mine = state.dishes.filter(d => d.restaurantId === r.id).length;
     const nd = (r.dishes || []).length;
     const status = r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating</span>' : '';
     const dots = [...new Set((r.dishes || []).flatMap(d => d.flavors || []))];
     return `<button class="rcard ${r.featured ? 'featured' : ''}" data-rest="${esc(r.id)}">
-      <span class="ricon">${r.featured ? '⭐' : cuisineIcon(r)}</span>
+      <span class="ricon">${r.icon ? esc(r.icon) : r.featured ? '⭐' : cuisineIcon(r)}</span>
       <span class="rmeta"><b>${esc(r.name)}</b><small>${esc(r.village || r.town || '')}${r.cuisine ? ' · ' + esc(r.cuisine) : ''}</small>
       <small>${extra || ''}${nd ? `${nd} dish${nd > 1 ? 'es' : ''} to try` : 'No dishes tagged yet'}${mine ? ` · ${mine} logged by you` : ''} ${FIDS.filter(f => dots.includes(f)).map(f => `<span class="dot" style="background:${F[f].color}"></span>`).join(' ')}</small>
       <span class="row wrap" style="gap:4px;margin-top:4px">${r.featured ? '<span class="pill gold">Featured</span>' : ''}${status}${r.giftCertificate ? '<span class="pill coral">Gift card deal</span>' : ''}</span></span>
@@ -519,7 +595,7 @@
   }
   function dishRowHTML(r, dish, i) {
     return `<div class="dishrow">
-      <div class="dr-main"><b>${esc(dish.name)}</b>
+      <div class="dr-main"><b>${dish.hero && AV['h-' + dish.hero] ? `<span class="hero-tag" title="${esc(AV['h-' + dish.hero].full)} orders this in Chapter 1">${avatarHTML('h-' + dish.hero, 'xs')}</span>` : ''}${esc(dish.name)}${dish.price ? ` <small class="price">${esc(dish.price)}</small>` : ''}</b>
         <span class="mini-flavors">${texTags(dish.textures)}</span>
         <small>${dish.mine ? '🙋 Added by you' : dish.suggested ? '💡 Likely dish (unverified)' : '✓ On the menu'}</small></div>
       <div class="dr-act"><button class="btn small coral" data-logdish="${esc(r.id)}|${i}">Log</button>
@@ -546,12 +622,13 @@
     const lastCi = (state.checkins || []).filter(c => c.rid === r.id).sort((a, b) => b.ts - a.ts)[0];
     const checkedToday = lastCi && lastCi.date === today();
     const dist = here && r.lat ? ` · ${fmtDist(distKm(here, r))} away` : '';
-    openSheet(`<div class="row wrap" style="gap:6px;margin-bottom:6px">${r.featured ? '<span class="pill gold">⭐ Featured</span>' : ''}${r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating restaurant</span>' : '<span class="pill gray">Not yet participating</span>'}${r.cuisine ? `<span class="pill">${esc(r.cuisine)}</span>` : ''}</div>
+    openSheet(`<div class="row wrap" style="gap:6px;margin-bottom:6px">${r.storyStart ? '<span class="pill navy">⚓ Story start · Chapter 1</span>' : ''}${r.featured ? '<span class="pill gold">⭐ Featured</span>' : ''}${r.custom ? '<span class="pill gray">Added by you</span>' : r.participating ? '<span class="pill green">Participating restaurant</span>' : '<span class="pill gray">Not yet participating</span>'}${r.cuisine ? `<span class="pill">${esc(r.cuisine)}</span>` : ''}</div>
       <h2>${esc(r.name)}</h2>
       <p class="muted" style="margin:0">📍 ${esc(r.address || r.village || r.town || 'Cape Cod')}${dist}</p>
       ${r.hours ? `<p class="muted" style="margin:2px 0 0">🕚 ${esc(r.hours)}</p>` : ''}
       <p class="row wrap" style="gap:12px;margin:6px 0 8px;font-size:14px">${r.website ? `<a href="${esc(r.website)}" target="_blank" rel="noopener">🌐 Website</a>` : ''}${r.lat ? `<a href="https://www.openstreetmap.org/?mlat=${r.lat}&mlon=${r.lng}#map=18/${r.lat}/${r.lng}" target="_blank" rel="noopener">🗺️ Map</a>` : ''}</p>
       ${r.description ? `<p>${esc(r.description)}</p>` : ''}
+      ${r.storyStart ? `<div class="cast-row" style="margin:4px 0 10px">${HEROINES.map(h => `<span class="cast-chip" title="${esc(h.full)} orders the ${esc(h.dish)}">${avatarHTML(h.id, 'sm')}<span style="${fcss(h.flavor)}">${esc(h.name)}</span></span>`).join('')}</div>` : ''}
       ${checkedToday ? '<div class="preview-note">✅ Checked in today. Come back tomorrow for another check-in bonus.</div>' : r.participating ? `<div class="preview-note">📱 Scan this restaurant's Flavor Quest QR code on-site to check in for +${CONFIG.XP.checkin} XP.</div>` : ''}
       ${giftHTML(r)}
       <div class="spread" style="margin-top:14px"><h3 style="margin:0">Dishes by flavor combo</h3><button class="btn small ghost" data-adddish="${esc(r.id)}">＋ Add a dish</button></div>
@@ -628,7 +705,7 @@
     const c = p ? p.dishes.length : 0, rc = p ? p.restaurants.size : 0;
     const statusTxt = { locked: '🔒 Locked', unlocked: '🔓 Unlocked — ready to start', progress: '🍴 In progress', complete: '⭐ Complete!' }[s];
     const subs = subKeys(n), sups = superKeys(n);
-    const chips = n.ids.map(id => `<span class="chip on" style="background:${F[id].color}">${F[id].icon} ${F[id].name}</span>`).join('');
+    const chips = n.ids.map(id => `<span class="chip on" style="${fcss(id)}">${F[id].icon} ${F[id].name}</span>`).join('');
     const where = whereToFind(key);
     openSheet(`<small class="muted" style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">Level ${n.level} · ${LEVEL_SINGULAR[n.level]}</small>
       <h2>${esc(nodeName(n))}</h2>
@@ -694,7 +771,7 @@
       <div class="card">
         <div class="spread"><h3 style="margin:0">Flavors you tasted</h3><button class="btn small ghost" id="lgSuggest">✨ Suggest</button></div>
         <p class="hint" style="margin-top:4px">Pick every flavor in the dish. The exact combo decides which node it counts toward.</p>
-        <div class="chips" id="lgFlavors">${FLAVORS.map(f => `<button class="chip ${draft.flavors.includes(f.id) ? 'on' : ''}" data-f="${f.id}" style="${draft.flavors.includes(f.id) ? 'background:' + f.color : ''}">${f.icon} ${f.name}</button>`).join('')}</div>
+        <div class="chips" id="lgFlavors">${FLAVORS.map(f => `<button class="chip ${draft.flavors.includes(f.id) ? 'on' : ''}" data-f="${f.id}" style="${draft.flavors.includes(f.id) ? fcss(f.id) : ''}">${f.icon} ${f.name}</button>`).join('')}</div>
         <div style="margin-top:12px">${note}</div>
         <h3 style="margin-top:6px">Textures <small style="font-family:inherit;font-weight:600">· bonus rounds</small></h3>
         <div class="chips" id="lgTex">${TEXTURES.map(t => `<button class="chip tex ${draft.textures.includes(t.id) ? 'on' : ''}" data-t="${t.id}">${t.icon} ${t.name}${derived.texFound[t.id] ? '' : ' <small style="color:inherit;opacity:.7">NEW</small>'}</button>`).join('')}</div>
@@ -858,7 +935,7 @@
       <div class="mini-flavors" style="margin-bottom:10px">${flavorTags(d.flavors)}${texTags(d.textures)}</div>
       ${counted ? `<div class="preview-note">✅ Counts toward <a href="javascript:void 0" data-node="${key}">${esc(nodeName(NODE[key]))}</a></div>` : `<div class="preview-note warn">🔒 Logged while <a href="javascript:void 0" data-node="${key}">${esc(nodeName(NODE[key]))}</a> was locked — journal only.</div>`}
       ${d.receipt ? `<h3>🧾 Receipt verified</h3><img class="receipt-thumb" src="${d.receipt}" alt="Receipt">` : '<p class="muted">No receipt attached.</p>'}
-      <div class="row" style="margin-top:16px"><button class="btn ghost small" data-rest="${esc(d.restaurantId)}">View restaurant</button><button class="btn ghost small" id="delDish" style="border-color:#c23a2b;color:#c23a2b">Delete</button></div>`,
+      <div class="row" style="margin-top:16px"><button class="btn ghost small" data-rest="${esc(d.restaurantId)}">View restaurant</button><button class="btn ghost small" id="delDish" style="border-color:#a33a2b;color:#a33a2b">Delete</button></div>`,
       root => {
         bindCommon(root);
         $('#delDish', root).onclick = () => {
@@ -881,10 +958,10 @@
         <small>${Math.min(c, CONFIG.BONUS_ROUND_NODES)}/${CONFIG.BONUS_ROUND_NODES} flavor nodes</small></span></div>`;
     }).join('');
     v.innerHTML = `<div class="card hero"><div class="row">${avatarHTML(state.profile.avatar, 'lg')}<div>
-        <small style="color:#dff3fa;font-weight:700">LEVEL ${L.n}</small><h2 style="margin:0">${esc(L.title)}</h2>
+        <small style="color:#dde4ea;font-weight:700">LEVEL ${L.n}</small><h2 style="margin:0">${esc(L.title)}</h2>
         <p style="margin:2px 0 0">${d.xp} XP · ${Object.keys(d.badges).length} badges</p></div></div>
-        <div class="meter" style="background:rgba(255,255,255,.25);margin-top:12px"><i style="width:${L.pct}%;background:linear-gradient(90deg,#ffd36b,#ff8f4f)"></i></div>
-        <small style="color:#dff3fa">${L.hi - d.xp} XP to level ${L.n + 1}</small></div>
+        <div class="meter" style="background:rgba(255,255,255,.25);margin-top:12px"><i style="width:${L.pct}%;background:linear-gradient(90deg,#d8b46a,#c4927b)"></i></div>
+        <small style="color:#dde4ea">${L.hi - d.xp} XP to level ${L.n + 1}</small></div>
 
       <div class="section-title"><h2>Milestone rewards</h2><span class="pill gold">Preview</span></div>
       <div class="card">${MILESTONES.map(m => `<div class="reward ${earned(m.badge) ? 'on' : ''}"><span class="ri">${m.icon}</span><span class="rt"><b>${esc(m.title)}</b><small>${esc(m.reward)}</small></span>${earned(m.badge) ? '<span class="pill green">Earned</span>' : '<span class="pill gray">Locked</span>'}</div>`).join('')}
@@ -903,12 +980,19 @@
     bindCommon(v);
   }
 
+  // Re-draw the photo badge ribbon when the player's name changes (badge is a canvas image)
+  async function refreshBadgeName() {
+    const p = state.profile && state.profile.photo;
+    if (!p || !p.art || !window.FQStudio || p.badgeName === state.profile.name) return;
+    try { p.badge = await window.FQStudio.composeBadge(p.art, state.profile.name); p.badgeName = state.profile.name; save(); renderChrome(); if (currentTab() === 'home' || currentTab() === 'rewards') render(); } catch (e) { /* keep old badge */ }
+  }
+
   // ---------- Settings ----------
   function openSettings() {
     openSheet(`<div class="row" style="margin-bottom:10px">${avatarHTML(state.profile.avatar, 'lg')}<div><h2 style="margin:0">${esc(state.profile.name)}</h2><small class="muted">Exploring since ${fmtDate(state.profile.created)}</small></div></div>
       <h3>Profile</h3>
       <label class="field"><span>Name</span><input type="text" id="stName" maxlength="24" value="${esc(state.profile.name)}"></label>
-      <div class="avatar-grid" style="margin-top:0">${AVATARS.map(a => `<button class="avatar-opt ${state.profile.avatar === a.id ? 'sel' : ''}" data-av="${a.id}">${avatarHTML(a.id, 'sm')}<span>${a.name}</span></button>`).join('')}</div>
+      <div id="stPicker">${avatarPickerHTML(state.profile.avatar, state.profile.photo, 'sm')}</div>
       <button class="btn block" id="stSave">Save profile</button>
       <h3 style="margin-top:20px">Your save data</h3>
       <p class="hint">Progress lives only in this browser. Export a backup to move it to another phone.</p>
@@ -916,15 +1000,20 @@
         <button class="btn ghost block" id="stExport">⬇️ Export progress (JSON)</button>
         <label class="btn ghost block" style="position:relative;overflow:hidden">⬆️ Import progress<input type="file" accept="application/json,.json" id="stImport" style="position:absolute;inset:0;opacity:0"></label>
         <button class="btn ghost block" id="stHelp">❓ How to play</button>
-        <button class="btn ghost block" id="stReset" style="border-color:#c23a2b;color:#c23a2b">Reset all progress</button>
+        <button class="btn ghost block" id="stReset" style="border-color:#a33a2b;color:#a33a2b">Reset all progress</button>
       </div>
       <p class="footer-note">Flavor Quest · Cape Cod · v1</p>`, root => {
-      let av = state.profile.avatar;
-      $$('[data-av]', root).forEach(b => b.onclick = () => { av = b.dataset.av; $$('[data-av]', root).forEach(x => x.classList.toggle('sel', x === b)); });
-      $('#stSave', root).onclick = () => {
+      let av = state.profile.avatar, ph = state.profile.photo || null;
+      const picker = $('#stPicker', root);
+      const ctx = { get: () => av, set: id => { av = id; }, photo: () => ph, setPhoto: p => { ph = p; }, name: () => $('#stName', root).value.trim() || state.profile.name,
+        rerender: () => { picker.innerHTML = avatarPickerHTML(av, ph, 'sm'); bindAvatarPicker(picker, ctx); } };
+      bindAvatarPicker(picker, ctx);
+      $('#stSave', root).onclick = async () => {
         const nm = $('#stName', root).value.trim();
         if (!nm) return toast('✏️', 'Name cannot be empty');
-        state.profile.name = nm.slice(0, 24); state.profile.avatar = av; save(); closeSheet(); render(); toast('✅', 'Profile saved');
+        state.profile.name = nm.slice(0, 24); state.profile.avatar = av;
+        if (ph) state.profile.photo = ph;
+        save(); await refreshBadgeName(); closeSheet(); render(); toast('✅', 'Profile saved');
       };
       $('#stExport', root).onclick = () => {
         const blob = new Blob([JSON.stringify(state, null, 1)], { type: 'application/json' });
@@ -949,7 +1038,7 @@
       $('#stHelp', root).onclick = openHelp;
       $('#stReset', root).onclick = () => {
         if (!confirm('Reset ALL progress? This cannot be undone (export a backup first).')) return;
-        state = blankState(); save(); rebuildRestaurants(); onb = { step: 0, avatar: 'lobster', name: '', flavor: null }; closeSheet(); setTab('home');
+        state = blankState(); save(); rebuildRestaurants(); onb = { step: 0, avatar: 'lobster', name: '', flavor: null, photo: null }; closeSheet(); setTab('home');
       };
     });
   }

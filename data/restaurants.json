@@ -1,6 +1,6 @@
 {
  "_note": "Flavor Quest restaurant list. Falmouth & Woods Hole, researched Nov 2026 from restaurant websites/menus and local guides. Dishes without \"suggested\" were found on the restaurant's menu/site or in a published review of it; \"suggested\": true means a likely dish that has not been verified. participating=false means the restaurant has not joined Flavor Quest. No deals are offered except the Cape Island Café example.",
- "updated": "2026-11-18",
+ "updated": "2026-11-26",
  "restaurants": [
   {
    "id": "cape-island-cafe",
@@ -100,6 +100,235 @@
       "tender",
       "spicy-hot"
      ]
+    }
+   ]
+  },
+  {
+   "id": "syren-harbour",
+   "name": "Syren Harbour",
+   "town": "Falmouth",
+   "village": "Woods Hole",
+   "address": "71 Water St, Woods Hole, MA 02543",
+   "lat": 41.52452,
+   "lng": -70.67145,
+   "cuisine": "Bar & restaurant · Caribbean & Latin seafood",
+   "website": "https://syrenharbour.com",
+   "phone": "508-801-5444",
+   "participating": false,
+   "featured": true,
+   "storyStart": true,
+   "icon": "🧜‍♀️",
+   "description": "Where the Flavor Quest story begins. In Chapter 1 the five Flavor Cast women walk into Syren Harbour on Water Street and each orders the dish that matches her flavor.",
+   "dishSource": "Syren Harbour menu (71 Water St, Woods Hole). Dish names and prices from the menu; flavor and texture tags are Flavor Quest's.",
+   "dishes": [
+    {
+     "name": "Haka style Jerk Chicken",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "tender",
+      "spicy-hot"
+     ],
+     "price": "$22",
+     "hero": "sweet"
+    },
+    {
+     "name": "Mojo Criollo Shrimp",
+     "flavors": [
+      "sour",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "tender"
+     ],
+     "price": "$26",
+     "hero": "sour"
+    },
+    {
+     "name": "Shrimp Milanesa",
+     "flavors": [
+      "salty",
+      "bitter",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "crunchy"
+     ],
+     "price": "$30",
+     "hero": "salty"
+    },
+    {
+     "name": "Espresso Martini Nitro Mocktail",
+     "flavors": [
+      "sweet",
+      "bitter"
+     ],
+     "textures": [
+      "silky"
+     ],
+     "price": "$5.75",
+     "hero": "bitter"
+    },
+    {
+     "name": "Porchetta Pernil",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy",
+      "tender"
+     ],
+     "price": "$34",
+     "hero": "umami"
+    },
+    {
+     "name": "Shrimp Butternut Bisque",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy",
+      "spicy-hot"
+     ],
+     "price": "$10"
+    },
+    {
+     "name": "Chicken Pumpkin Soup",
+     "flavors": [
+      "sweet",
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "price": "$10"
+    },
+    {
+     "name": "Jerk Chicken Arugula Flat Bread",
+     "flavors": [
+      "sweet",
+      "salty",
+      "bitter"
+     ],
+     "textures": [
+      "crispy",
+      "spicy-hot"
+     ],
+     "price": "$14"
+    },
+    {
+     "name": "Vermont Brussels",
+     "flavors": [
+      "sweet",
+      "sour",
+      "bitter"
+     ],
+     "textures": [
+      "tender",
+      "crispy"
+     ],
+     "price": "$10"
+    },
+    {
+     "name": "Popcorn Shrimp",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "crispy"
+     ],
+     "price": "$14"
+    },
+    {
+     "name": "Crispy Wings, Sweet (Tamarind)",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "crispy"
+     ],
+     "price": "6/$16"
+    },
+    {
+     "name": "Crispy Wings, Savory (Mojo Criollo)",
+     "flavors": [
+      "sour",
+      "salty"
+     ],
+     "textures": [
+      "crispy"
+     ],
+     "price": "6/$16"
+    },
+    {
+     "name": "Beef Empanadas",
+     "flavors": [
+      "salty",
+      "umami"
+     ],
+     "textures": [
+      "flaky"
+     ],
+     "price": "2/$10"
+    },
+    {
+     "name": "Caribbean Caesar",
+     "flavors": [
+      "sour",
+      "salty",
+      "bitter"
+     ],
+     "textures": [
+      "crunchy"
+     ],
+     "price": "$10"
+    },
+    {
+     "name": "Iced Espresso Cream",
+     "flavors": [
+      "sweet",
+      "bitter"
+     ],
+     "textures": [
+      "creamy"
+     ],
+     "price": "$5.75"
+    },
+    {
+     "name": "Cranberry Citrus Sparkler",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "fizzy"
+     ],
+     "price": "$5.50"
+    },
+    {
+     "name": "Ginger Lime Fizz",
+     "flavors": [
+      "sweet",
+      "sour"
+     ],
+     "textures": [
+      "fizzy",
+      "spicy-hot"
+     ],
+     "price": "$5.50"
     }
    ]
   },

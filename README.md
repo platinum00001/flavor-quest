@@ -138,3 +138,10 @@ python3 -m http.server 8000
 ```
 python3 tests/round2.py http://localhost:8000/ /tmp/shots/
 ```
+
+## Round 3 (Nov 26, 2026): Syren Harbour theme, photo avatars, Flavor Cast
+- **Theme:** colors sampled from the animated Syren Harbour logo (navy `#141825`, steel `#909ead`, sky `#c0cdd4`, cloud `#efeff3`, bronze `#c4927b`, palm `#41514e`), Playfair Display headings, rope and ribbon accents. Flavor colors were retuned to match (sweet `#b8506f`, sour `#d6a933` with navy text, salty `#3f7aa6`, bitter `#4f7d4f`, umami `#9a5a3a`).
+- **Photo avatar** (`js/avatar-studio.js`): take a photo (`capture=user`) or upload one, drag and zoom to crop, then "Make it an avatar" for an illustrated Syren-style oval badge with the player's name on the ribbon. Everything runs in a canvas on the phone, and only 256px data URLs are stored in localStorage. Nothing is uploaded.
+- **Flavor Cast avatars:** Adaeze, Raven, Marisol, Valentina and Noor (`assets/avatars/*-256.webp` / `*-512.webp`, JPG copies too).
+- **Syren Harbour** (71 Water St, Woods Hole) added as the featured story start, with 17 dishes from its menu. The five Chapter 1 orders are tagged with `hero`.
+- Tests: `python3 tests/round3.py [BASE] [SHOTS] [FACE_IMAGE]` and `tests/round2.py`.

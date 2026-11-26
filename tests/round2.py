@@ -41,7 +41,7 @@ async def main():
         await pg.wait_for_selector('.mapcard')
         await pg.wait_for_timeout(3700)
         n = await pg.evaluate('FlavorQuest.restaurants().length')
-        check(n == 38, f'{n} restaurants loaded')
+        check(n == 39, f'{n} restaurants loaded (38 + Syren Harbour)')
         nv = await pg.evaluate('document.querySelectorAll("details.village").length')
         check(nv >= 8, f'{nv} village groups on home')
         await pg.evaluate('document.querySelector("details.village").open = true')
@@ -141,7 +141,7 @@ async def main():
             await a.click('#merge')
             out = json.loads(await a.input_value('#out'))
             r = [x for x in out['restaurants'] if x['name'] == 'Test Harbor Bakery']
-            check(len(out['restaurants']) == 39 and r and r[0]['dishes'][0]['suggested'] and r[0]['id'].startswith('test-harbor-bakery') and r[0]['village'] == 'Falmouth Village', 'admin.html merges submission (new restaurant + suggested dish)')
+            check(len(out['restaurants']) == 40 and r and r[0]['dishes'][0]['suggested'] and r[0]['id'].startswith('test-harbor-bakery') and r[0]['village'] == 'Falmouth Village', 'admin.html merges submission (new restaurant + suggested dish)')
             await a.screenshot(path=SHOTS + '11-admin-merge.png', full_page=False)
         q = await ctx.new_page(); await q.goto(BASE + 'qr.html'); await q.wait_for_selector('.tent svg')
         cnt = await q.evaluate('document.querySelectorAll(".tent svg").length'); check(cnt == 1, f'qr.html shows {cnt} participating QR (Cape Island Café)')

@@ -1,0 +1,116 @@
+"""Round 3: Syren Harbour retheme, photo avatar studio, Flavor Cast avatars, Syren Harbour data.
+Usage: python3 tests/round3.py [BASE_URL] [SHOTS_DIR] [FACE_IMAGE]"""
+import asyncio, json, sys, os
+from playwright.async_api import async_playwright
+BASE = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8931/flavor-quest/'
+SHOTS = sys.argv[2] if len(sys.argv) > 2 else '/workspace/flavor-quest-shots/round3/'
+FACE = sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dish.jpg')
+os.makedirs(SHOTS, exist_ok=True)
+errors = []
+def check(c, m):
+    print(('PASS ' if c else 'FAIL ') + m)
+    if not c: errors.append(m)
+async def snap(pg, name, full=False):
+    await pg.wait_for_timeout(500)
+    await pg.screenshot(path=SHOTS + name, full_page=full)
+
+async def main():
+    async with async_playwright() as p:
+        b = await p.chromium.launch(executable_path='/usr/bin/google-chrome')
+        ctx = await b.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
+        pg = await ctx.new_page()
+        cons, uploads = [], []
+        pg.on('console', lambda m: cons.append(m.text) if m.type == 'error' else None)
+        pg.on('pageerror', lambda e: cons.append(str(e)))
+        pg.on('request', lambda r: uploads.append(r.url) if r.method in ('POST', 'PUT') else None)
+        await pg.goto(BASE); await pg.wait_for_selector('#onbNext')
+        await pg.evaluate('document.fonts.ready')
+        bg = await pg.evaluate('getComputedStyle(document.documentElement).getPropertyValue("--navy").trim()')
+        hfont = await pg.evaluate('getComputedStyle(document.querySelector("h1")).fontFamily')
+        check(bg == '#141825' and 'Playfair' in hfont, f'theme vars + serif display font ({bg}, {hfont})')
+        await snap(pg, '0-welcome.png')
+        await pg.click('#onbNext'); await pg.wait_for_selector('#avCamera')
+        cap = await pg.evaluate('[document.querySelector("#avCamera").getAttribute("capture"), document.querySelector("#avCamera").accept, document.querySelector("#avUpload").accept]')
+        check(cap == ['user', 'image/*', 'image/*'], f'take-photo input capture=user + upload fallback {cap}')
+        nh = await pg.evaluate('document.querySelectorAll(".avatar-grid.cast [data-av^=h-] img").length')
+        check(nh == 5, f'{nh} Flavor Cast heroine avatars selectable')
+        txt = await pg.inner_text('.photo-av')
+        check('stays on your phone' in txt, 'privacy note shown')
+        await snap(pg, '1-onboarding-avatar-step.png')
+        # photo upload → crop → stylize
+        await pg.set_input_files('#avUpload', FACE)
+        await pg.wait_for_selector('.studio #avCropDone')
+        await pg.wait_for_timeout(300)
+        box = await pg.query_selector('#avCrop'); bb = await box.bounding_box()
+        await pg.mouse.move(bb['x'] + bb['width'] / 2, bb['y'] + bb['height'] / 2); await pg.mouse.down()
+        await pg.mouse.move(bb['x'] + bb['width'] / 2 + 20, bb['y'] + bb['height'] / 2 + 10, steps=5); await pg.mouse.up()
+        await pg.fill('#avZoom', '1.3'); await pg.dispatch_event('#avZoom', 'input')
+        await snap(pg, '2-photo-crop.png')
+        await pg.click('#avCropDone'); await pg.wait_for_selector('#avMakeArt')
+        await pg.click('#avMakeArt'); await pg.wait_for_selector('#avPickArt:not([disabled]) .badge img', timeout=30000)
+        await snap(pg, '3-stylized-photo-avatar.png')
+        await pg.click('#avSave'); await pg.wait_for_selector('.studio', state='detached')
+        sel = await pg.evaluate('document.querySelector("[data-av=photo]").classList.contains("sel")')
+        check(sel, 'photo avatar selected after save')
+        await pg.click('#onbNext'); await pg.fill('#onbName', 'Cape Islander'); await pg.click('#onbNext')
+        await pg.click('[data-fl=umami]'); await pg.click('#onbNext')
+        await pg.wait_for_selector('.mapcard'); await pg.wait_for_timeout(1500)
+        prof = await pg.evaluate('(() => { const p = FlavorQuest.state.profile; return { av: p.avatar, use: p.photo && p.photo.use, badge: p.photo && p.photo.badge.slice(0, 22), blen: p.photo && p.photo.badge.length, olen: p.photo && p.photo.orig.length, bn: p.photo && p.photo.badgeName }; })()')
+        check(prof['av'] == 'photo' and prof['use'] == 'art' and prof['badge'].startswith('data:image/') and prof['bn'] == 'Cape Islander', f'profile saved with stylized badge named for player {prof}')
+        check(prof['blen'] < 200000 and prof['olen'] < 80000, f'compressed data URLs (badge {prof["blen"]} chars, orig {prof["olen"]} chars)')
+        await snap(pg, '4-home.png')
+        await pg.evaluate('document.querySelector(".card.story").scrollIntoView({block:"center"})')
+        await snap(pg, '5-home-story-card.png')
+        # reload persistence
+        await pg.reload(); await pg.wait_for_selector('.mapcard'); await pg.wait_for_timeout(800)
+        ok = await pg.evaluate('!!document.querySelector("#meAvatar.badge img") && document.querySelector("#meAvatar img").src.startsWith("data:image/")')
+        check(ok, 'photo badge avatar persists after reload (top bar)')
+        n = await pg.evaluate('FlavorQuest.restaurants().length')
+        sh = await pg.evaluate('FlavorQuest.restaurants().find(r => r.id === "syren-harbour")')
+        check(n == 39 and sh and sh['storyStart'] and sh['address'].startswith('71 Water St') and len([d for d in sh['dishes'] if d.get('hero')]) == 5, f'Syren Harbour in data ({n} restaurants, {len(sh["dishes"])} dishes)')
+        # restaurant page
+        await pg.click('.card.story button.btn[data-rest=syren-harbour]'); await pg.wait_for_selector('#sheet:not([hidden]) .combo')
+        t = await pg.inner_text('#sheet')
+        check('Syren Harbour' in t and 'Mojo Criollo Shrimp' in t and 'Story start' in t, 'Syren Harbour restaurant page with story dishes')
+        await snap(pg, '6-restaurant-syren-harbour.png')
+        await pg.evaluate('document.querySelector("#sheet .combo").scrollIntoView({block:"start"})')
+        await snap(pg, '7-restaurant-dishes.png')
+        await pg.click('#sheetClose')
+        # tree
+        await pg.click('.bottomnav [data-tab=tree]'); await pg.wait_for_selector('.tree')
+        await pg.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+        await snap(pg, '8-tree.png')
+        # settings: switch to original, then heroine, then back to stylized; rename redraws ribbon
+        await pg.click('#meBtn'); await pg.wait_for_selector('#stPicker [data-photouse=orig]')
+        await snap(pg, '9-profile-settings.png')
+        await pg.click('#stPicker [data-photouse=orig]'); await pg.click('#stSave'); await pg.wait_for_timeout(500)
+        use = await pg.evaluate('FlavorQuest.state.profile.photo.use')
+        check(use == 'orig', 'can switch to original photo')
+        await pg.click('#meBtn'); await pg.wait_for_selector('#stPicker')
+        await pg.click('#stPicker [data-av=h-bitter]'); await pg.click('#stSave'); await pg.wait_for_timeout(400)
+        av = await pg.evaluate('FlavorQuest.state.profile.avatar')
+        check(av == 'h-bitter', 'heroine avatar (Valentina) selectable in settings')
+        await pg.click('#meBtn'); await pg.wait_for_selector('#stPicker [data-photouse=art]')
+        await pg.click('#stPicker [data-photouse=art]'); await pg.fill('#stName', 'Captain Cape'); await pg.click('#stSave'); await pg.wait_for_timeout(1200)
+        pr = await pg.evaluate('[FlavorQuest.state.profile.avatar, FlavorQuest.state.profile.photo.use, FlavorQuest.state.profile.photo.badgeName]')
+        check(pr == ['photo', 'art', 'Captain Cape'], f'back to stylized + ribbon redrawn for new name {pr}')
+        # take-photo path (camera input) also opens the studio
+        await pg.click('#meBtn'); await pg.wait_for_selector('#avCamera')
+        await pg.set_input_files('#avCamera', FACE); await pg.wait_for_selector('.studio #avCropDone')
+        await pg.click('#avCancel'); await pg.wait_for_selector('.studio', state='detached')
+        check(True, 'camera input opens the studio')
+        await pg.click('#sheetClose')
+        # rewards hero with badge
+        await pg.click('.bottomnav [data-tab=rewards]'); await pg.wait_for_selector('.hero .badge img')
+        await snap(pg, '10-rewards.png')
+        # flavor color contrast for sour chip
+        await pg.click('.bottomnav [data-tab=log]'); await pg.wait_for_selector('#lgFlavors')
+        await pg.click('#lgFlavors [data-f=sour]')
+        col = await pg.evaluate('getComputedStyle(document.querySelector("#lgFlavors [data-f=sour]")).color')
+        check(col == 'rgb(20, 24, 37)', f'sour chip uses navy text for contrast ({col})')
+        ext = [u for u in uploads]
+        check(not ext, f'no uploads/POSTs made: {ext}')
+        check(not cons, 'no console errors: ' + '; '.join(cons))
+        await b.close()
+    print('ERRORS:', errors) if errors else print('ALL PASS')
+asyncio.run(main())
